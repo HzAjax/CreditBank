@@ -9,8 +9,14 @@ import ru.volodin.CreditBank.entity.dto.ScoringDataDto;
 import java.util.List;
 
 @Service
-public interface CalculatorService {
-    CreditDto calculateCredit(ScoringDataDto scoringDataDto);
+public class CalculatorServiceImpl implements CalculatorService {
+    @Override
+    public CreditDto calculateCredit(ScoringDataDto scoringDataDto) {
+        return null;
+    }
 
-    List<LoanOfferDto> calculateLoan(LoanStatementRequestDto loanStatementRequestDto);
+    @Override
+    public List<LoanOfferDto> calculateLoan(LoanStatementRequestDto loanStatementRequestDto) {
+        return List.of();
+    }
 }

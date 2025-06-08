@@ -1,0 +1,60 @@
+server:
+  port: 8080
+
+logging:
+  level:
+    root: INFO
+
+springdoc:
+  api-docs:
+    path: /calculator/api-docs
+  swagger-ui:
+    path: /calculator/api-docs-ui
+
+service:
+  rate: 21
+  calculator:
+    round: 2
+  insurance:
+    cost: 10000
+
+scoring:
+  filters:
+    soft:
+      salaryClient:
+        changeRate: -2
+      insurance:
+        changeRate: -3
+      workStatus:
+        selfEmployed:
+          changeRate: 2
+        businessman:
+          changeRate: 1
+      workPosition:
+        middleManager:
+          changeRate: -2
+        topManager:
+          changeRate: -3
+      maritalStatus:
+        married:
+          changeRate: -3
+        single:
+          changeRate: 1
+      gender:
+        notBinary:
+          changeRate: 7
+        maleAge:
+          min: 30
+          max: 55
+        femaleAge:
+          min: 32
+          max: 60
+        changeRate: -3
+    hard:
+      countSalary: 24
+      age:
+        min: 20
+        max: 65
+      experience:
+        total: 18
+        current: 3

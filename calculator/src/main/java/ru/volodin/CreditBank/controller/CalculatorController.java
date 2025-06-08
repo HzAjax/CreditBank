@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.volodin.CreditBank.service.CalculatorService;
 
 @RestController
-@RequestMapping("/calculator/calc")
+@RequestMapping("/calculator")
 @RequiredArgsConstructor
 public class CalculatorController {
 
