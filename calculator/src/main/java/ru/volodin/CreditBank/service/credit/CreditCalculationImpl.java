@@ -17,6 +17,9 @@ import java.util.UUID;
 @Component
 public class CreditCalculationImpl implements CreditCalculation{
 
+    private static final BigDecimal ONE_HUNDRED = BigDecimal.valueOf(100);
+    private static final BigDecimal TWELVE = BigDecimal.valueOf(12);
+
     @Value("${service.calculator.round}")
     private Integer countDigitAfterPoint;
 
@@ -75,7 +78,7 @@ public class CreditCalculationImpl implements CreditCalculation{
         CreditDto creditDto = new CreditDto(
                 scoringDataDto.getAmount(),
                 scoringDataDto.getTerm(),
-                monthlyPayment.setScale(countDigitAfterPoint, RoundingMode.HALF_EVEN),
+                round(monthlyPayment),
                 newRate,
                 psk,
                 scoringDataDto.getIsInsuranceEnabled(),
@@ -111,13 +114,8 @@ public class CreditCalculationImpl implements CreditCalculation{
             BigDecimal debtPayment = monthlyPayment.subtract(interestPayment);
             remainingDebt = remainingDebt.subtract(debtPayment);
 
-            PaymentScheduleElementDto dto = new PaymentScheduleElementDto(
-                    i,
-                    month,
-                    monthlyPayment.setScale(countDigitAfterPoint, RoundingMode.HALF_EVEN),
-                    interestPayment.setScale(countDigitAfterPoint, RoundingMode.HALF_EVEN),
-                    debtPayment.setScale(countDigitAfterPoint, RoundingMode.HALF_EVEN),
-                    remainingDebt.setScale(countDigitAfterPoint, RoundingMode.HALF_EVEN)
+            PaymentScheduleElementDto dto = createScheduleElement(
+                    i, month, monthlyPayment, interestPayment, debtPayment, remainingDebt
             );
             schedule.add(dto);
         }
@@ -137,7 +135,29 @@ public class CreditCalculationImpl implements CreditCalculation{
     }
 
     private BigDecimal getMonthlyRate(BigDecimal newRate) {
-        return newRate.divide(BigDecimal.valueOf(100))
-                .divide(BigDecimal.valueOf(12), new MathContext(MathContext.DECIMAL128.getPrecision(), RoundingMode.HALF_EVEN));
+        return newRate.divide(ONE_HUNDRED)
+                .divide(TWELVE, new MathContext(MathContext.DECIMAL128.getPrecision(), RoundingMode.HALF_EVEN));
+    }
+
+    private BigDecimal round(BigDecimal value) {
+        return value.setScale(countDigitAfterPoint, RoundingMode.HALF_EVEN);
+    }
+
+    private PaymentScheduleElementDto createScheduleElement(
+            int number,
+            LocalDate date,
+            BigDecimal monthlyPayment,
+            BigDecimal interestPayment,
+            BigDecimal debtPayment,
+            BigDecimal remainingDebt
+    ) {
+        return new PaymentScheduleElementDto(
+                number,
+                date,
+                round(monthlyPayment),
+                round(interestPayment),
+                round(debtPayment),
+                round(remainingDebt)
+        );
     }
 }

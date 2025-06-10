@@ -82,7 +82,7 @@ public class ScoringProviderImpl implements ScoringProvider {
 
         for (OfferCombination offerCombination : FILTER_COMBINATIONS) {
 
-            List<RateAndInsuredServiceDto> filterResults = applyFilters(offerCombination);
+            List<RateAndInsuredServiceDto> filterResults = preScoringFilters(offerCombination);
 
             RateAndInsuredServiceDto totalEffect = calculateTotalEffect(filterResults);
             RateAndInsuredServiceDto finalResult = combineEffects(totalEffect);
@@ -98,7 +98,7 @@ public class ScoringProviderImpl implements ScoringProvider {
         return offers;
     }
 
-    private List<RateAndInsuredServiceDto> applyFilters(OfferCombination offerCombination) {
+    private List<RateAndInsuredServiceDto> preScoringFilters(OfferCombination offerCombination) {
         List<RateAndInsuredServiceDto> filterResults = new ArrayList<>();
 
         for (ScoringLightFilter filter : lightFilters) {
