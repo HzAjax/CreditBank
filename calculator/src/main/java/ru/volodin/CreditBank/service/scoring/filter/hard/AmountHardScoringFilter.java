@@ -3,6 +3,7 @@ package ru.volodin.CreditBank.service.scoring.filter.hard;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import ru.volodin.CreditBank.entity.dto.LoanStatementRequestDto;
 import ru.volodin.CreditBank.entity.dto.ScoringDataDto;
 import ru.volodin.CreditBank.exeptions.ScoringException;
 import ru.volodin.CreditBank.service.scoring.filter.ScoringHardFilter;

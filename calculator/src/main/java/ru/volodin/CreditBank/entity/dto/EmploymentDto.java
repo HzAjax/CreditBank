@@ -1,14 +1,14 @@
 package ru.volodin.CreditBank.entity.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import ru.volodin.CreditBank.entity.dto.enums.EmploymentStatus;
 import ru.volodin.CreditBank.entity.dto.enums.Position;
 
 import java.math.BigDecimal;
 
-@Data
+@Builder
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class EmploymentDto {

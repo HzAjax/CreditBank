@@ -1,1 +1,3 @@
 rootProject.name = 'CreditBank'
+include 'calculator'
+

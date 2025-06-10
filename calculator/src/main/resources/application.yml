@@ -16,7 +16,7 @@ service:
   calculator:
     round: 2
   insurance:
-    cost: 10000
+    cost: 100000
 
 scoring:
   filters:

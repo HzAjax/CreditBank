@@ -1,22 +1,23 @@
 package ru.volodin.CreditBank.entity.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.UUID;
 
-@Data
+@Builder
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class LoanOfferDto {
     private UUID statementId;
-    private BigDecimal requestedAmount;
-    private BigDecimal totalAmount;
-    private Integer term;
-    private BigDecimal monthlyPayment;
-    private BigDecimal rate;
+    private BigDecimal requestedAmount; //запрос
+    private BigDecimal totalAmount; //долг + страховка
+    private Integer term; //срок
+    private BigDecimal monthlyPayment; //платеж в месяц
+    private BigDecimal rate; //ставка
     private Boolean isInsuranceEnabled;
     private Boolean isSalaryClient;
+
 }

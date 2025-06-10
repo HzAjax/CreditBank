@@ -4,6 +4,7 @@ package ru.volodin.CreditBank.service.scoring.filter.hard;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import ru.volodin.CreditBank.entity.dto.LoanStatementRequestDto;
 import ru.volodin.CreditBank.entity.dto.ScoringDataDto;
 import ru.volodin.CreditBank.exeptions.ScoringException;
 import ru.volodin.CreditBank.service.scoring.filter.ScoringHardFilter;
@@ -25,6 +26,20 @@ public class AgeHardScoringFilter implements ScoringHardFilter {
     public boolean check(ScoringDataDto scoringDataDto) {
         LocalDate now = LocalDate.now();
         long age = ChronoUnit.YEARS.between(scoringDataDto.getBirthdate(), now);
+
+        if (age < minAge) {
+            throw new ScoringException("Age below minimum - " + minAge);
+        }
+        if (age > maxAge) {
+            throw new ScoringException("Age above the maximum - "+ maxAge);
+        }
+
+        return true;
+    }
+
+    public boolean check(LoanStatementRequestDto loanStatementRequestDto) {
+        LocalDate now = LocalDate.now();
+        long age = ChronoUnit.YEARS.between(loanStatementRequestDto.getBirthdate(), now);
 
         if (age < minAge) {
             throw new ScoringException("Age below minimum - " + minAge);
