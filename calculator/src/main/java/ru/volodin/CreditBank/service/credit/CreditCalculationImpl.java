@@ -73,7 +73,8 @@ public class CreditCalculationImpl implements CreditCalculation{
         BigDecimal monthlyRate = getMonthlyRate(newRate);
         BigDecimal totalAmount = scoringDataDto.getAmount().add(insuredService);
         BigDecimal monthlyPayment = getMonthlyPayment(totalAmount, scoringDataDto.getTerm(), newRate);
-        List<PaymentScheduleElementDto> schedule = getSchedule(monthlyPayment, monthlyRate, totalAmount, scoringDataDto.getTerm());        BigDecimal psk = getPsk(schedule);
+        List<PaymentScheduleElementDto> schedule = getSchedule(monthlyPayment, monthlyRate, totalAmount, scoringDataDto.getTerm());
+        BigDecimal psk = getPsk(schedule);
 
         CreditDto creditDto = new CreditDto(
                 scoringDataDto.getAmount(),
