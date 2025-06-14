@@ -1,15 +1,13 @@
+spring:
+  application:
+  name: CreditBank
+
 server:
   port: 8080
 
 logging:
   level:
     root: INFO
-
-springdoc:
-  api-docs:
-    path: /calculator/api-docs
-  swagger-ui:
-    path: /calculator/api-docs-ui
 
 service:
   rate: 21
