@@ -14,7 +14,7 @@ java {
 }
 
 ext.versions = [
-		springDoc  : '2.6.0',
+		springDoc  : '2.8.8',
 		lombok     : '1.18.30',
 		junit      : '1.10.0'
 ]
@@ -39,4 +39,8 @@ dependencies {
 
 springBoot {
 	mainClass = 'ru.volodin.CreditBank.CalculatorApplication'
+}
+
+test {
+	useJUnitPlatform()
 }

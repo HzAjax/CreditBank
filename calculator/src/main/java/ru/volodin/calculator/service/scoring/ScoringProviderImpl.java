@@ -12,7 +12,6 @@ import ru.volodin.calculator.service.scoring.filter.soft.InsuranceSoftScoringFil
 import ru.volodin.calculator.service.scoring.filter.soft.SalaryClientSoftScoringFilter;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j

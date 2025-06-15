@@ -28,4 +28,5 @@ public class ControllerExceptionHandler {
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorMessageDto(message, HttpStatus.BAD_REQUEST.value(), request.getRequestURI(),LocalDateTime.now()));
     }
+
 }

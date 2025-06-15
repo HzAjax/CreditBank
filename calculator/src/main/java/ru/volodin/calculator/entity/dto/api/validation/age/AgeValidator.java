@@ -26,6 +26,11 @@ public class AgeValidator implements ConstraintValidator<ValidAge, LocalDate> {
     @Override
     public boolean isValid(LocalDate birthdate, ConstraintValidatorContext context) {
 
+        if (birthdate == null) {
+            log.warn("Birthdate is null – skipping age validation");
+            return true;
+        }
+
         int age = (int) ChronoUnit.YEARS.between(birthdate, LocalDate.now());
 
         if (age < min || age > max) {

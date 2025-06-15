@@ -24,6 +24,11 @@ public class AmountValidator implements ConstraintValidator<ValidAmount, Scoring
     @Override
     public boolean isValid(ScoringDataDto scoringDataDto, ConstraintValidatorContext context) {
 
+        if (scoringDataDto.getAmount() == null || scoringDataDto.getEmployment().getSalary() == null) {
+            log.warn("Amount or salary is null – skipping amount validation");
+            return true;
+        }
+
         BigDecimal maxLoan = scoringDataDto.getEmployment().getSalary().multiply(BigDecimal.valueOf(countSalary));
 
         if (scoringDataDto.getAmount().compareTo(maxLoan) > 0) {

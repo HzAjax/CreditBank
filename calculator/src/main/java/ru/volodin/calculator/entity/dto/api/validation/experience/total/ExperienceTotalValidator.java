@@ -21,6 +21,11 @@ public class ExperienceTotalValidator implements ConstraintValidator<ValidExperi
     @Override
     public boolean isValid(Integer workExperienceTotal, ConstraintValidatorContext context) {
 
+        if (workExperienceTotal == null) {
+            log.warn("ExperienceTotal is null – skipping ExperienceTotal validation");
+            return true;
+        }
+
         if (workExperienceTotal <= min) {
             context.disableDefaultConstraintViolation();
 

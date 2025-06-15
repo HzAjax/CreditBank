@@ -21,6 +21,11 @@ public class ExperienceCurrentValidator implements ConstraintValidator<ValidExpe
     @Override
     public boolean isValid(Integer workExperienceCurrent, ConstraintValidatorContext context) {
 
+        if (workExperienceCurrent == null) {
+            log.warn("ExperienceCurrent is null – skipping ExperienceCurrent validation");
+            return true;
+        }
+
         if (workExperienceCurrent <= min) {
             context.disableDefaultConstraintViolation();
 
