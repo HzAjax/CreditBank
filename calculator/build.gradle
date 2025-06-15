@@ -38,7 +38,7 @@ dependencies {
 }
 
 springBoot {
-	mainClass = 'ru.volodin.CreditBank.CalculatorApplication'
+	mainClass = 'ru.volodin.calculator.CalculatorApplication'
 }
 
 test {

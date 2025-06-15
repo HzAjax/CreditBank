@@ -1,0 +1,14 @@
+version: '1.0'
+
+services:
+  creditbank-app:
+    image: creditbank-app:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    container_name: creditbank-app
+    environment:
+      - JAVA_OPTS=
+    restart: unless-stopped
