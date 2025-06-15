@@ -24,8 +24,11 @@ public class AmountValidator implements ConstraintValidator<ValidAmount, Scoring
     @Override
     public boolean isValid(ScoringDataDto scoringDataDto, ConstraintValidatorContext context) {
 
-        if (scoringDataDto.getAmount() == null || scoringDataDto.getEmployment().getSalary() == null) {
-            log.warn("Amount or salary is null – skipping amount validation");
+        if (scoringDataDto.getAmount() == null
+                || scoringDataDto.getEmployment() == null
+                || scoringDataDto.getEmployment().getSalary() == null) {
+
+            log.warn("Amount or salary or employment is null – skipping amount validation");
             return true;
         }
 

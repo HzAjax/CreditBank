@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
-public class WorkStatusSoftScoringFilterTest {
+class WorkStatusSoftScoringFilterTest {
 
 
     @Autowired
@@ -39,6 +39,12 @@ public class WorkStatusSoftScoringFilterTest {
     void testSelfEmployedDelta() {
         ScoringDataDto dto = createDto(EmploymentStatus.SELF_EMPLOYED);
         assertEquals(BigDecimal.valueOf(2), filter.rateDelta(dto));
+    }
+
+    @Test
+    void testEmployedDelta() {
+        ScoringDataDto dto = createDto(EmploymentStatus.EMPLOYED);
+        assertEquals(BigDecimal.ZERO, filter.rateDelta(dto));
     }
 
     @Test

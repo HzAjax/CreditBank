@@ -11,7 +11,7 @@ import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
-public class InsuranceSoftScoringFilterTest {
+class InsuranceSoftScoringFilterTest {
 
     @Autowired
     private InsuranceSoftScoringFilter filter;

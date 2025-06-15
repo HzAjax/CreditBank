@@ -14,7 +14,7 @@ import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-class ValidAmountValidatorTest {
+class AmountValidatorTest {
 
     @Autowired
     private Validator validator;
@@ -44,13 +44,6 @@ class ValidAmountValidatorTest {
         assertThat(violations).hasSize(1);
         assertThat(violations.iterator().next().getMessage())
                 .contains("exceeds the maximum allowable amount");
-    }
-
-    @Test
-    void nullAmount_shouldPass() {
-        ScoringDataDto dto = createDto(null, new BigDecimal("10000"));
-        Set<ConstraintViolation<ScoringDataDto>> violations = validator.validate(dto);
-        assertThat(violations).isEmpty();
     }
 
     @Test

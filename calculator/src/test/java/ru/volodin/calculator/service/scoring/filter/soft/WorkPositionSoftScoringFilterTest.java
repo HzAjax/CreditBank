@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
-public class WorkPositionSoftScoringFilterTest {
+class WorkPositionSoftScoringFilterTest {
 
     @Autowired
     private WorkPositionSoftScoringFilter filter;
@@ -38,6 +38,12 @@ public class WorkPositionSoftScoringFilterTest {
     void testTopManagerRateDelta() {
         ScoringDataDto dto = createDto(Position.TOP_MANAGER);
         assertEquals(BigDecimal.valueOf(-3), filter.rateDelta(dto));
+    }
+
+    @Test
+    void testManagerRateDelta() {
+        ScoringDataDto dto = createDto(Position.MANAGER);
+        assertEquals(BigDecimal.ZERO, filter.rateDelta(dto));
     }
 
     @Test

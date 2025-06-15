@@ -32,16 +32,6 @@ public class CreditCalculationImpl implements CreditCalculation {
     @Override
     public List<LoanOfferDto> generateLoanOffer(BigDecimal amount, Integer term, List<SimpleScoringInfoDto> listInfo) {
 
-        if (amount == null) {
-            throw new IllegalArgumentException("Amount must not be null");
-        }
-        if (term == null) {
-            throw new IllegalArgumentException("Term must not be null");
-        }
-        if (listInfo == null || listInfo.contains(null)) {
-            throw new IllegalArgumentException("listInfo must not be null or contain null elements");
-        }
-
         List<LoanOfferDto> loanOffers = new ArrayList<>();
 
         log.info("Calculate possible loans");

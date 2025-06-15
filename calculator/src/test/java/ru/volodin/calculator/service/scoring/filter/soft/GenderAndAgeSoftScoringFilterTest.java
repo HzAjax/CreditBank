@@ -12,7 +12,7 @@ import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
-public class GenderAndAgeSoftScoringFilterTest {
+class GenderAndAgeSoftScoringFilterTest {
 
     @Autowired
     protected GenderAndAgeSoftScoringFilter filter;
@@ -58,5 +58,25 @@ public class GenderAndAgeSoftScoringFilterTest {
     void testInsuranceDeltaAlwaysZero() {
         ScoringDataDto dto = createDto(Gender.MALE, 40);
         assertEquals(BigDecimal.ZERO, filter.insuranceDelta(dto));
+    }
+
+    @Test
+    void testGenderOther_shouldReturnPositiveRateDelta() {
+        ScoringDataDto dto = ScoringDataDto.builder()
+                .gender(Gender.OTHER)
+                .birthdate(LocalDate.now().minusYears(25))
+                .build();
+
+        assertEquals(BigDecimal.valueOf(7), filter.rateDelta(dto));
+    }
+
+    @Test
+    void testGenderInRangeButWrongAge_shouldReturnZero() {
+        ScoringDataDto dto = ScoringDataDto.builder()
+                .gender(Gender.MALE)
+                .birthdate(LocalDate.now().minusYears(20))
+                .build();
+
+        assertEquals(BigDecimal.ZERO, filter.rateDelta(dto));
     }
 }

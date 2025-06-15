@@ -1,6 +1,7 @@
 package ru.volodin.calculator.entity.dto.api;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,6 +22,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @ValidAmount
 public class ScoringDataDto {
+    @NotNull
     private BigDecimal amount;
     private Integer term;
     private String firstName;

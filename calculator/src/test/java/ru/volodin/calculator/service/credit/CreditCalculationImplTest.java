@@ -11,7 +11,6 @@ import ru.volodin.calculator.entity.dto.enums.Gender;
 import ru.volodin.calculator.entity.dto.enums.MaritalStatus;
 import ru.volodin.calculator.entity.dto.enums.Position;
 
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 

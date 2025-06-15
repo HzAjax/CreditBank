@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
-public class SalaryClientSoftScoringFilterTest {
+class SalaryClientSoftScoringFilterTest {
 
     @Autowired
     private SalaryClientSoftScoringFilter filter;

@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
-public class MaritalStatusSoftScoringFilterTest {
+class MaritalStatusSoftScoringFilterTest {
 
     @Autowired
     private MaritalStatusSoftScoringFilter filter;
