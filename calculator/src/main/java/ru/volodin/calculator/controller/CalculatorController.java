@@ -1,5 +1,6 @@
 package ru.volodin.calculator.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -32,13 +33,17 @@ public class CalculatorController {
     private final CalculatorService calculatorService;
 
     @PostMapping("/offers")
+    @Operation(summary = "calculation possible offers")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Calculated offers",
-                    content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = LoanOfferDto.class)) }),
-            @ApiResponse(responseCode = "400", description = "Invalid format",
-                    content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorMessageDto.class)) }),
-            @ApiResponse(responseCode = "422", description = "The request could not be completed",
-                    content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorMessageDto.class)) })})
+            @ApiResponse(responseCode = "200", description = "Successfully calculated loan offers",
+                    content = @Content( mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = LoanOfferDto.class))),
+            @ApiResponse(responseCode = "400", description = "Bad Request - validation failed",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorMessageDto.class))),
+            @ApiResponse(responseCode = "422", description = "Unprocessable Entity - business rule violation",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorMessageDto.class))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorMessageDto.class)))
+    })
     public List<LoanOfferDto> calculatePossibleLoanTerms(@RequestBody @Valid LoanStatementRequestDto loanStatementRequestDto) {
 
         log.info("Request: POST /offers");
@@ -53,13 +58,17 @@ public class CalculatorController {
     }
 
     @PostMapping("/calc")
+    @Operation(summary = "calculation credit")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Calculated credit",
-                    content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = CreditDto.class)) }),
-            @ApiResponse(responseCode = "400", description = "Invalid format",
-                    content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorMessageDto.class)) }),
-            @ApiResponse(responseCode = "422", description = "The request could not be completed",
-                    content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorMessageDto.class)) })})
+            @ApiResponse(responseCode = "200", description = "Successfully calculated full credit info",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = CreditDto.class))),
+            @ApiResponse(responseCode = "400", description = "Bad Request - validation failed",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorMessageDto.class))),
+            @ApiResponse(responseCode = "422", description = "Unprocessable Entity - business rule violation",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorMessageDto.class))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorMessageDto.class)))
+    })
         public CreditDto fullCalculateLoanParametersAndScoring(@RequestBody @Valid ScoringDataDto scoringDataDto) {
 
         log.info("Request: POST /calc");

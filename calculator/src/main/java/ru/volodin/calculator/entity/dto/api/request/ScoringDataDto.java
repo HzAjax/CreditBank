@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,6 +22,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @ValidAmount
+@Data
 public class ScoringDataDto {
     @NotNull(message = "Amount must not be null")
     private BigDecimal amount;
@@ -46,9 +48,11 @@ public class ScoringDataDto {
     private LocalDate birthdate;
 
     @NotBlank(message = "Passport series is required")
+    @Pattern(regexp = "\\d{4}", message = "Passport series must be 4 digits")
     private String passportSeries;
 
     @NotBlank(message = "Passport number is required")
+    @Pattern(regexp = "\\d{6}", message = "Passport number must be 6 digits")
     private String passportNumber;
 
     @NotNull(message = "Passport issue date is required")
