@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import ru.volodin.calculator.configuration.ServiceProperties;
-import ru.volodin.calculator.entity.dto.api.ScoringDataDto;
+import ru.volodin.calculator.entity.dto.api.request.ScoringDataDto;
 import ru.volodin.calculator.entity.dto.internal.SimpleScoringInfoDto;
 import ru.volodin.calculator.service.scoring.filter.ScoringSoftFilter;
 import ru.volodin.calculator.service.scoring.filter.soft.InsuranceSoftScoringFilter;

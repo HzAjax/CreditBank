@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.volodin.calculator.configuration.ScoringFilterProperties;
 import ru.volodin.calculator.configuration.ServiceProperties;
-import ru.volodin.calculator.entity.dto.api.ScoringDataDto;
+import ru.volodin.calculator.entity.dto.api.request.ScoringDataDto;
 import ru.volodin.calculator.service.scoring.filter.ScoringSoftFilter;
 
 import java.math.BigDecimal;

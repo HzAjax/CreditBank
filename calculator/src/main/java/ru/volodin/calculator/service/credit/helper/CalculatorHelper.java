@@ -1,6 +1,6 @@
 package ru.volodin.calculator.service.credit.helper;
 
-import ru.volodin.calculator.entity.dto.api.PaymentScheduleElementDto;
+import ru.volodin.calculator.entity.dto.api.response.PaymentScheduleElementDto;
 
 import java.math.BigDecimal;
 import java.util.List;

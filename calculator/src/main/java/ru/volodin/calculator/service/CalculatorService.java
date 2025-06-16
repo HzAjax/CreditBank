@@ -1,9 +1,9 @@
 package ru.volodin.calculator.service;
 
-import ru.volodin.calculator.entity.dto.api.CreditDto;
-import ru.volodin.calculator.entity.dto.api.LoanOfferDto;
-import ru.volodin.calculator.entity.dto.api.LoanStatementRequestDto;
-import ru.volodin.calculator.entity.dto.api.ScoringDataDto;
+import ru.volodin.calculator.entity.dto.api.response.CreditDto;
+import ru.volodin.calculator.entity.dto.api.response.LoanOfferDto;
+import ru.volodin.calculator.entity.dto.api.request.LoanStatementRequestDto;
+import ru.volodin.calculator.entity.dto.api.request.ScoringDataDto;
 
 import java.util.List;
 

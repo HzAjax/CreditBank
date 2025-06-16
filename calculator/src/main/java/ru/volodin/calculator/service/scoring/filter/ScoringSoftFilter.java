@@ -1,6 +1,6 @@
 package ru.volodin.calculator.service.scoring.filter;
 
-import ru.volodin.calculator.entity.dto.api.ScoringDataDto;
+import ru.volodin.calculator.entity.dto.api.request.ScoringDataDto;
 
 import java.math.BigDecimal;
 

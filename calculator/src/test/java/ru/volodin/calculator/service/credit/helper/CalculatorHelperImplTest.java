@@ -3,7 +3,7 @@ package ru.volodin.calculator.service.credit.helper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import ru.volodin.calculator.entity.dto.api.PaymentScheduleElementDto;
+import ru.volodin.calculator.entity.dto.api.response.PaymentScheduleElementDto;
 
 import java.math.BigDecimal;
 import java.util.List;

@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.volodin.calculator.configuration.ServiceProperties;
-import ru.volodin.calculator.entity.dto.api.PaymentScheduleElementDto;
+import ru.volodin.calculator.entity.dto.api.response.PaymentScheduleElementDto;
 
 import java.math.BigDecimal;
 import java.math.MathContext;

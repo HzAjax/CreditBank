@@ -3,7 +3,7 @@ package ru.volodin.calculator.service.scoring.filter.soft;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import ru.volodin.calculator.entity.dto.api.ScoringDataDto;
+import ru.volodin.calculator.entity.dto.api.request.ScoringDataDto;
 import ru.volodin.calculator.entity.dto.enums.MaritalStatus;
 
 import java.math.BigDecimal;

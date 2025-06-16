@@ -1,8 +1,8 @@
 package ru.volodin.calculator.service.credit;
 
-import ru.volodin.calculator.entity.dto.api.CreditDto;
-import ru.volodin.calculator.entity.dto.api.LoanOfferDto;
-import ru.volodin.calculator.entity.dto.api.ScoringDataDto;
+import ru.volodin.calculator.entity.dto.api.response.CreditDto;
+import ru.volodin.calculator.entity.dto.api.response.LoanOfferDto;
+import ru.volodin.calculator.entity.dto.api.request.ScoringDataDto;
 import ru.volodin.calculator.entity.dto.internal.SimpleScoringInfoDto;
 
 import java.math.BigDecimal;

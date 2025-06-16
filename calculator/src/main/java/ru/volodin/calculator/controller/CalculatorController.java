@@ -13,7 +13,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.volodin.calculator.entity.dto.api.*;
+import ru.volodin.calculator.entity.dto.api.request.LoanStatementRequestDto;
+import ru.volodin.calculator.entity.dto.api.request.ScoringDataDto;
+import ru.volodin.calculator.entity.dto.api.response.CreditDto;
+import ru.volodin.calculator.entity.dto.api.response.ErrorMessageDto;
+import ru.volodin.calculator.entity.dto.api.response.LoanOfferDto;
 import ru.volodin.calculator.service.CalculatorService;
 
 import java.util.List;
