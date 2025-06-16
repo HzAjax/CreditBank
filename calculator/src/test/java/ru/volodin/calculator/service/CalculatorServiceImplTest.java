@@ -64,7 +64,7 @@ class CalculatorServiceImplTest {
 
         assertThat(credit).isNotNull();
         assertThat(credit.getAmount()).isEqualByComparingTo("300000");
-        assertThat(credit.getRate()).isEqualByComparingTo("9"); // see explanation below
+        assertThat(credit.getRate()).isEqualByComparingTo("9");
         assertThat(credit.getMonthlyPayment()).isGreaterThan(BigDecimal.ZERO);
         assertThat(credit.getPsk()).isGreaterThan(credit.getAmount());
         assertThat(credit.getPaymentSchedule()).hasSize(12);

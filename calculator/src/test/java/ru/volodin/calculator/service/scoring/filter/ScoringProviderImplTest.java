@@ -52,7 +52,7 @@ class ScoringProviderImplTest {
         BigDecimal[] result = scoringProvider.fullScoring(dto);
 
         assertThat(result[0]).isEqualByComparingTo("9");        // 21 -3 -2 -3 -3 +2 = 9
-        assertThat(result[1]).isEqualByComparingTo("100000");   // страховка
+        assertThat(result[1]).isEqualByComparingTo("100000");
     }
 
     @Test
