@@ -30,7 +30,6 @@ public class EmploymentDto {
     private String employerINN;
 
     @NotNull(message = "Salary must not be null")
-    @DecimalMin(value = "1000", message = "Salary must be at least 1,000")
     private BigDecimal salary;
 
     @NotNull(message = "Position must be specified")

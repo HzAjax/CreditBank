@@ -23,7 +23,6 @@ import java.time.LocalDate;
 @ValidAmount
 public class ScoringDataDto {
     @NotNull(message = "Amount must not be null")
-    @DecimalMin(value = "10000", message = "Amount must be at least 10,000")
     private BigDecimal amount;
 
     @NotNull(message = "Term must not be null")
