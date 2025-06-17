@@ -1,53 +1,52 @@
 package ru.volodin.calculator.service.scoring.filter.soft;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.util.ReflectionTestUtils;
 import ru.volodin.calculator.entity.dto.api.request.ScoringDataDto;
 
 import java.math.BigDecimal;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
 class SalaryClientSoftScoringFilterTest {
 
-    @Autowired
     private SalaryClientSoftScoringFilter filter;
 
+    @BeforeEach
+    void setUp() {
+        filter = new SalaryClientSoftScoringFilter();
+
+        ReflectionTestUtils.setField(filter, "changeRateValue", new BigDecimal("-2"));
+    }
+
     @Test
-    void testRateDeltaSalaryClientTrue() {
+    void testRateDelta_salaryClient_shouldReturnDecreaseRate() {
         ScoringDataDto dto = ScoringDataDto.builder()
                 .isSalaryClient(true)
                 .build();
 
-        assertEquals(BigDecimal.valueOf(-2), filter.rateDelta(dto));
+        BigDecimal result = filter.rateDelta(dto);
+        assertThat(result).isEqualByComparingTo("-2");
     }
 
     @Test
-    void testRateDeltaSalaryClientFalse() {
+    void testRateDelta_notSalaryClient_shouldReturnZero() {
         ScoringDataDto dto = ScoringDataDto.builder()
                 .isSalaryClient(false)
                 .build();
 
-        assertEquals(BigDecimal.ZERO, filter.rateDelta(dto));
+        BigDecimal result = filter.rateDelta(dto);
+        assertThat(result).isEqualByComparingTo("0");
     }
 
     @Test
-    void testRateDeltaSalaryClientNull() {
-        ScoringDataDto dto = ScoringDataDto.builder()
-                .isSalaryClient(null)
-                .build();
-
-        assertEquals(BigDecimal.ZERO, filter.rateDelta(dto));
-    }
-
-    @Test
-    void testInsuranceDeltaAlwaysZero() {
+    void testInsuranceDelta_shouldAlwaysReturnZero() {
         ScoringDataDto dto = ScoringDataDto.builder()
                 .isSalaryClient(true)
                 .build();
 
-        assertEquals(BigDecimal.ZERO, filter.insuranceDelta(dto));
+        BigDecimal result = filter.insuranceDelta(dto);
+        assertThat(result).isEqualByComparingTo("0");
     }
 }

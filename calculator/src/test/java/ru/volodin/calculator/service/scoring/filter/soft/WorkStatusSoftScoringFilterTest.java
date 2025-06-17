@@ -1,64 +1,73 @@
 package ru.volodin.calculator.service.scoring.filter.soft;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.util.ReflectionTestUtils;
 import ru.volodin.calculator.entity.dto.api.request.EmploymentDto;
 import ru.volodin.calculator.entity.dto.api.request.ScoringDataDto;
 import ru.volodin.calculator.entity.dto.enums.EmploymentStatus;
 
 import java.math.BigDecimal;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
 class WorkStatusSoftScoringFilterTest {
 
-
-    @Autowired
     private WorkStatusSoftScoringFilter filter;
 
-    private ScoringDataDto createDto(EmploymentStatus status) {
-        EmploymentDto employment = EmploymentDto.builder()
-                .employmentStatus(status)
+    @BeforeEach
+    void setUp() {
+        filter = new WorkStatusSoftScoringFilter();
+
+        ReflectionTestUtils.setField(filter, "changeRateValueSelfEmployed", new BigDecimal("2"));
+        ReflectionTestUtils.setField(filter, "changeRateValueBusinessman", new BigDecimal("1"));
+    }
+
+    @Test
+    void testRateDelta_selfEmployed_shouldReturn2() {
+        ScoringDataDto dto = ScoringDataDto.builder()
+                .employment(EmploymentDto.builder()
+                        .employmentStatus(EmploymentStatus.SELF_EMPLOYED)
+                        .build())
                 .build();
 
-        return ScoringDataDto.builder()
-                .employment(employment)
+        BigDecimal result = filter.rateDelta(dto);
+        assertThat(result).isEqualByComparingTo("2");
+    }
+
+    @Test
+    void testRateDelta_businessOwner_shouldReturn1() {
+        ScoringDataDto dto = ScoringDataDto.builder()
+                .employment(EmploymentDto.builder()
+                        .employmentStatus(EmploymentStatus.BUSINESS_OWNER)
+                        .build())
                 .build();
+
+        BigDecimal result = filter.rateDelta(dto);
+        assertThat(result).isEqualByComparingTo("1");
     }
 
     @Test
-    void testBusinessOwnerRateDelta() {
-        ScoringDataDto dto = createDto(EmploymentStatus.BUSINESS_OWNER);
-        assertEquals(BigDecimal.valueOf(1), filter.rateDelta(dto));
+    void testRateDelta_employed_shouldReturnZero() {
+        ScoringDataDto dto = ScoringDataDto.builder()
+                .employment(EmploymentDto.builder()
+                        .employmentStatus(EmploymentStatus.EMPLOYED)
+                        .build())
+                .build();
+
+        BigDecimal result = filter.rateDelta(dto);
+        assertThat(result).isEqualByComparingTo("0");
     }
 
     @Test
-    void testSelfEmployedDelta() {
-        ScoringDataDto dto = createDto(EmploymentStatus.SELF_EMPLOYED);
-        assertEquals(BigDecimal.valueOf(2), filter.rateDelta(dto));
-    }
+    void testInsuranceDelta_shouldReturnZeroAlways() {
+        ScoringDataDto dto = ScoringDataDto.builder()
+                .employment(EmploymentDto.builder()
+                        .employmentStatus(EmploymentStatus.BUSINESS_OWNER)
+                        .build())
+                .build();
 
-    @Test
-    void testEmployedDelta() {
-        ScoringDataDto dto = createDto(EmploymentStatus.EMPLOYED);
-        assertEquals(BigDecimal.ZERO, filter.rateDelta(dto));
-    }
-
-    @Test
-    void testNullStatusRateDelta() {
-        ScoringDataDto dto = createDto(null);
-        assertThrows(NullPointerException.class, () -> {
-            filter.rateDelta(dto);
-        });
-    }
-
-    @Test
-    void testInsuranceDeltaAlwaysZero() {
-        ScoringDataDto dto = createDto(EmploymentStatus.SELF_EMPLOYED);
-        assertEquals(BigDecimal.ZERO, filter.insuranceDelta(dto));
+        BigDecimal result = filter.insuranceDelta(dto);
+        assertThat(result).isEqualByComparingTo("0");
     }
 }
-

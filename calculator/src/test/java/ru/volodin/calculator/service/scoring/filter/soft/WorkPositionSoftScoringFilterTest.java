@@ -1,62 +1,73 @@
 package ru.volodin.calculator.service.scoring.filter.soft;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.util.ReflectionTestUtils;
 import ru.volodin.calculator.entity.dto.api.request.EmploymentDto;
 import ru.volodin.calculator.entity.dto.api.request.ScoringDataDto;
 import ru.volodin.calculator.entity.dto.enums.Position;
 
 import java.math.BigDecimal;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
 class WorkPositionSoftScoringFilterTest {
 
-    @Autowired
     private WorkPositionSoftScoringFilter filter;
 
-    private ScoringDataDto createDto(Position position) {
-        EmploymentDto employment = EmploymentDto.builder()
-                .position(position)
+    @BeforeEach
+    void setUp() {
+        filter = new WorkPositionSoftScoringFilter();
+
+        ReflectionTestUtils.setField(filter, "changeRateValueMiddleManager", new BigDecimal("-2"));
+        ReflectionTestUtils.setField(filter, "changeRateValueTopManager", new BigDecimal("-3"));
+    }
+
+    @Test
+    void testRateDelta_midManager_shouldReturnMinus2() {
+        ScoringDataDto dto = ScoringDataDto.builder()
+                .employment(EmploymentDto.builder()
+                        .position(Position.MID_MANAGER)
+                        .build())
                 .build();
 
-        return ScoringDataDto.builder()
-                .employment(employment)
+        BigDecimal result = filter.rateDelta(dto);
+        assertThat(result).isEqualByComparingTo("-2");
+    }
+
+    @Test
+    void testRateDelta_topManager_shouldReturnMinus3() {
+        ScoringDataDto dto = ScoringDataDto.builder()
+                .employment(EmploymentDto.builder()
+                        .position(Position.TOP_MANAGER)
+                        .build())
                 .build();
+
+        BigDecimal result = filter.rateDelta(dto);
+        assertThat(result).isEqualByComparingTo("-3");
     }
 
     @Test
-    void testMiddleManagerRateDelta() {
-        ScoringDataDto dto = createDto(Position.MID_MANAGER);
-        assertEquals(BigDecimal.valueOf(-2), filter.rateDelta(dto));
+    void testRateDelta_worker_shouldReturnZero() {
+        ScoringDataDto dto = ScoringDataDto.builder()
+                .employment(EmploymentDto.builder()
+                        .position(Position.MANAGER)
+                        .build())
+                .build();
+
+        BigDecimal result = filter.rateDelta(dto);
+        assertThat(result).isEqualByComparingTo("0");
     }
 
     @Test
-    void testTopManagerRateDelta() {
-        ScoringDataDto dto = createDto(Position.TOP_MANAGER);
-        assertEquals(BigDecimal.valueOf(-3), filter.rateDelta(dto));
-    }
+    void testInsuranceDelta_shouldReturnZeroAlways() {
+        ScoringDataDto dto = ScoringDataDto.builder()
+                .employment(EmploymentDto.builder()
+                        .position(Position.MID_MANAGER)
+                        .build())
+                .build();
 
-    @Test
-    void testManagerRateDelta() {
-        ScoringDataDto dto = createDto(Position.MANAGER);
-        assertEquals(BigDecimal.ZERO, filter.rateDelta(dto));
-    }
-
-    @Test
-    void testNullPositionRateDelta() {
-        ScoringDataDto dto = createDto(null);
-        assertThrows(NullPointerException.class, () -> {
-            filter.rateDelta(dto);
-        });
-    }
-
-    @Test
-    void testInsuranceDeltaAlwaysZero() {
-        ScoringDataDto dto = createDto(Position.MID_MANAGER);
-        assertEquals(BigDecimal.ZERO, filter.insuranceDelta(dto));
+        BigDecimal result = filter.insuranceDelta(dto);
+        assertThat(result).isEqualByComparingTo("0");
     }
 }

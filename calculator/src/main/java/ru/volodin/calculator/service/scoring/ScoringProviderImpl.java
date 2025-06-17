@@ -12,6 +12,7 @@ import ru.volodin.calculator.service.scoring.filter.soft.SalaryClientSoftScoring
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -46,9 +47,9 @@ public class ScoringProviderImpl implements ScoringProvider {
 
     @Override
     public List<SimpleScoringInfoDto> simpleScoring() {
-        return List.of(true, false).stream()
+        return Stream.of(true, false)
                 .flatMap(isInsurance ->
-                        List.of(true, false).stream().map(isSalaryClient ->
+                        Stream.of(true, false).map(isSalaryClient ->
                                 createSimpleScoringInfo(isInsurance, isSalaryClient)
                         )
                 )

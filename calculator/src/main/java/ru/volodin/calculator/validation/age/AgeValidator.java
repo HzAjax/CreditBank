@@ -13,10 +13,7 @@ import java.time.temporal.ChronoUnit;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class AgeValidator implements ConstraintValidator<ValidAge, LocalDate> {
-
-    private final ScoringFilterProperties scoringProps;
 
     @Value("${scoring.filters.hard.age.min}")
     private int min;

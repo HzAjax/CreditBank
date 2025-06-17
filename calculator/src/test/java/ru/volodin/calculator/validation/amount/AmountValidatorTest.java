@@ -1,100 +1,103 @@
 package ru.volodin.calculator.validation.amount;
 
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validator;
+import jakarta.validation.ConstraintValidatorContext;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.util.ReflectionTestUtils;
 import ru.volodin.calculator.entity.dto.api.request.EmploymentDto;
 import ru.volodin.calculator.entity.dto.api.request.ScoringDataDto;
-import ru.volodin.calculator.entity.dto.enums.EmploymentStatus;
-import ru.volodin.calculator.entity.dto.enums.Gender;
-import ru.volodin.calculator.entity.dto.enums.MaritalStatus;
-import ru.volodin.calculator.entity.dto.enums.Position;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
 
-@SpringBootTest
+
 class AmountValidatorTest {
 
-    @Autowired
-    private Validator validator;
+    private AmountValidator validator;
+    private ConstraintValidatorContext context;
 
-    private ScoringDataDto validDto() {
-        return ScoringDataDto.builder()
-                .amount(new BigDecimal("100000"))
-                .term(12)
-                .firstName("Ivan")
-                .lastName("Petrov")
-                .gender(Gender.MALE)
-                .birthdate(LocalDate.of(1990, 1, 1))
-                .passportSeries("1234")
-                .passportNumber("567890")
-                .passportIssueDate(LocalDate.of(2010, 1, 1))
-                .passportIssueBranch("Some branch")
-                .maritalStatus(MaritalStatus.SINGLE)
-                .dependentAmount(0)
-                .accountNumber("40817810099910004312")
-                .isInsuranceEnabled(true)
-                .isSalaryClient(true)
-                .employment(
-                        EmploymentDto.builder()
-                                .employmentStatus(EmploymentStatus.SELF_EMPLOYED)
-                                .employerINN("1234567890")
-                                .salary(new BigDecimal("50000"))
-                                .position(Position.TOP_MANAGER)
-                                .workExperienceTotal(10)
-                                .workExperienceCurrent(5)
-                                .build()
-                )
+    @BeforeEach
+    void setUp() {
+        validator = new AmountValidator();
+
+        ReflectionTestUtils.setField(validator, "countSalary", 24);
+
+        context = mock(ConstraintValidatorContext.class);
+        ConstraintValidatorContext.ConstraintViolationBuilder builder = mock(ConstraintValidatorContext.ConstraintViolationBuilder.class);
+        ConstraintValidatorContext.ConstraintViolationBuilder.NodeBuilderCustomizableContext nodeBuilder = mock(ConstraintValidatorContext.ConstraintViolationBuilder.NodeBuilderCustomizableContext.class);
+
+        when(context.buildConstraintViolationWithTemplate(anyString())).thenReturn(builder);
+        when(builder.addPropertyNode("amount")).thenReturn(nodeBuilder);
+        when(nodeBuilder.addConstraintViolation()).thenReturn(context);
+    }
+
+    @Test
+    void testValidAmount_shouldReturnTrue() {
+        var dto = ScoringDataDto.builder()
+                .amount(new BigDecimal("1000000"))
+                .employment(EmploymentDto.builder().salary(new BigDecimal("50000")).build())
                 .build();
+
+        boolean result = validator.isValid(dto, context);
+        assertThat(result).isTrue();
     }
 
     @Test
-    void tooHighAmount_shouldFail() {
-        ScoringDataDto dto = validDto();
-        dto.setAmount(new BigDecimal("600000"));
-        dto.getEmployment().setSalary(new BigDecimal("10000")); // 240_000 max
+    void testAmountExactlyAtMax_shouldReturnTrue() {
+        var dto = ScoringDataDto.builder()
+                .amount(new BigDecimal("1200000"))
+                .employment(EmploymentDto.builder().salary(new BigDecimal("50000")).build())
+                .build();
 
-        Set<ConstraintViolation<ScoringDataDto>> violations = validator.validate(dto);
-
-        boolean found = violations.stream()
-                .anyMatch(v -> v.getPropertyPath().toString().equals("amount")
-                        && v.getMessage().contains("maximum allowable amount"));
-
-        assertThat(found).isTrue();
+        boolean result = validator.isValid(dto, context);
+        assertThat(result).isTrue();
     }
 
     @Test
-    void nullSalary_shouldPass() {
-        ScoringDataDto dto = validDto();
-        dto.getEmployment().setSalary(null);
+    void testAmountAboveMax_shouldReturnFalse() {
+        var dto = ScoringDataDto.builder()
+                .amount(new BigDecimal("1250000"))
+                .employment(EmploymentDto.builder().salary(new BigDecimal("50000")).build())
+                .build();
 
-        Set<ConstraintViolation<ScoringDataDto>> violations = validator.validate(dto);
-
-        // нет ошибки с propertyPath "amount"
-        boolean hasAmountError = violations.stream()
-                .anyMatch(v -> v.getPropertyPath().toString().equals("amount"));
-
-        assertThat(hasAmountError).isFalse();
+        boolean result = validator.isValid(dto, context);
+        assertThat(result).isFalse();
+        verify(context).buildConstraintViolationWithTemplate(contains("The requested loan amount exceeds"));
     }
 
     @Test
-    void validAmount_shouldPass() {
-        ScoringDataDto dto = validDto();
-        dto.setAmount(new BigDecimal("200000"));                   // <= 10_000 * 24 = 240_000
-        dto.getEmployment().setSalary(new BigDecimal("10000"));
+    void testNullAmount_shouldReturnTrue() {
+        var dto = ScoringDataDto.builder()
+                .amount(null)
+                .employment(EmploymentDto.builder().salary(new BigDecimal("50000")).build())
+                .build();
 
-        Set<ConstraintViolation<ScoringDataDto>> violations = validator.validate(dto);
+        boolean result = validator.isValid(dto, context);
+        assertThat(result).isTrue();
+    }
 
-        // Проверим, что нет ошибок по полю "amount"
-        boolean hasAmountViolation = violations.stream()
-                .anyMatch(v -> v.getPropertyPath().toString().equals("amount"));
+    @Test
+    void testNullSalary_shouldReturnTrue() {
+        var dto = ScoringDataDto.builder()
+                .amount(new BigDecimal("100000"))
+                .employment(EmploymentDto.builder().salary(null).build())
+                .build();
 
-        assertThat(hasAmountViolation).isFalse(); // return true → значит нарушений быть не должно
+        boolean result = validator.isValid(dto, context);
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    void testNullEmployment_shouldReturnTrue() {
+        var dto = ScoringDataDto.builder()
+                .amount(new BigDecimal("100000"))
+                .employment(null)
+                .build();
+
+        boolean result = validator.isValid(dto, context);
+        assertThat(result).isTrue();
     }
 }

@@ -1,49 +1,63 @@
 package ru.volodin.calculator.service.scoring.filter.soft;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.util.ReflectionTestUtils;
 import ru.volodin.calculator.entity.dto.api.request.ScoringDataDto;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
 class InsuranceSoftScoringFilterTest {
 
-    @Autowired
     private InsuranceSoftScoringFilter filter;
 
-    private ScoringDataDto buildDto(Boolean insuranceEnabled) {
-        return ScoringDataDto.builder()
-                .birthdate(LocalDate.of(1990, 1, 1))
-                .isInsuranceEnabled(insuranceEnabled)
+    @BeforeEach
+    void setUp() {
+        filter = new InsuranceSoftScoringFilter();
+
+        ReflectionTestUtils.setField(filter, "costInsurance", new BigDecimal("100000"));
+        ReflectionTestUtils.setField(filter, "changeRateValue", new BigDecimal("-3"));
+    }
+
+    @Test
+    void testRateDelta_withInsurance_shouldReturnDecreaseRate() {
+        ScoringDataDto dto = ScoringDataDto.builder()
+                .isInsuranceEnabled(true)
                 .build();
+
+        BigDecimal result = filter.rateDelta(dto);
+        assertThat(result).isEqualByComparingTo("-3");
     }
 
     @Test
-    void testRateDeltaWithInsurance() {
-        ScoringDataDto dto = buildDto(true);
-        assertEquals(BigDecimal.valueOf(-3), filter.rateDelta(dto));
+    void testRateDelta_withoutInsurance_shouldReturnZero() {
+        ScoringDataDto dto = ScoringDataDto.builder()
+                .isInsuranceEnabled(false)
+                .build();
+
+        BigDecimal result = filter.rateDelta(dto);
+        assertThat(result).isEqualByComparingTo("0");
     }
 
     @Test
-    void testRateDeltaWithoutInsurance() {
-        ScoringDataDto dto = buildDto(false);
-        assertEquals(BigDecimal.ZERO, filter.rateDelta(dto));
+    void testInsuranceDelta_withInsurance_shouldReturnCost() {
+        ScoringDataDto dto = ScoringDataDto.builder()
+                .isInsuranceEnabled(true)
+                .build();
+
+        BigDecimal result = filter.insuranceDelta(dto);
+        assertThat(result).isEqualByComparingTo("100000");
     }
 
     @Test
-    void testInsuranceDeltaWithInsurance() {
-        ScoringDataDto dto = buildDto(true);
-        assertEquals(BigDecimal.valueOf(100000), filter.insuranceDelta(dto));
-    }
+    void testInsuranceDelta_withoutInsurance_shouldReturnZero() {
+        ScoringDataDto dto = ScoringDataDto.builder()
+                .isInsuranceEnabled(false)
+                .build();
 
-    @Test
-    void testInsuranceDeltaWithoutInsurance() {
-        ScoringDataDto dto = buildDto(false);
-        assertEquals(BigDecimal.ZERO, filter.insuranceDelta(dto));
+        BigDecimal result = filter.insuranceDelta(dto);
+        assertThat(result).isEqualByComparingTo("0");
     }
 }

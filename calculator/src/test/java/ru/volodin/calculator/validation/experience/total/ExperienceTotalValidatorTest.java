@@ -1,54 +1,68 @@
 package ru.volodin.calculator.validation.experience.total;
 
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validator;
+import jakarta.validation.ConstraintValidatorContext;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import ru.volodin.calculator.validation.experience.total.ValidExperienceTotal;
-
-import java.util.Set;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
 
-@SpringBootTest
 class ExperienceTotalValidatorTest {
 
-    @Autowired
-    private Validator validator;
+    private ExperienceTotalValidator validator;
+    private ConstraintValidatorContext context;
 
-    static class TestDto {
-        @ValidExperienceTotal
-        private Integer workExperienceTotal;
+    @BeforeEach
+    void setUp() {
+        validator = new ExperienceTotalValidator();
 
-        public TestDto(Integer value) {
-            this.workExperienceTotal = value;
-        }
+        ReflectionTestUtils.setField(validator, "min", 18);
 
-        public TestDto() {
-        }
+        context = mock(ConstraintValidatorContext.class);
+        ConstraintValidatorContext.ConstraintViolationBuilder builder = mock(ConstraintValidatorContext.ConstraintViolationBuilder.class);
+        when(context.buildConstraintViolationWithTemplate(anyString())).thenReturn(builder);
+        when(builder.addConstraintViolation()).thenReturn(context);
     }
 
     @Test
-    void validExperience_shouldPass() {
-        TestDto dto = new TestDto(20);
-        Set<ConstraintViolation<TestDto>> violations = validator.validate(dto);
-        assertThat(violations).isEmpty();
+    void testExperienceGreaterThanMin_shouldBeValid() {
+        boolean result = validator.isValid(24, context);
+        assertThat(result).isTrue();
     }
 
     @Test
-    void tooLowExperience_shouldFail() {
-        TestDto dto = new TestDto(5);
-        Set<ConstraintViolation<TestDto>> violations = validator.validate(dto);
-        assertThat(violations).hasSize(1);
-        assertThat(violations.iterator().next().getMessage())
-                .contains("Total experience");
+    void testExperienceEqualToMin_shouldBeInvalid() {
+        boolean result = validator.isValid(18, context);
+        assertThat(result).isFalse();
+        verify(context).buildConstraintViolationWithTemplate(contains("Total experience 18"));
     }
 
     @Test
-    void nullExperience_shouldPassValidation() {
-        TestDto dto = new TestDto(null);
-        Set<ConstraintViolation<TestDto>> violations = validator.validate(dto);
-        assertThat(violations).isEmpty();
+    void testExperienceLessThanMin_shouldBeInvalid() {
+        boolean result = validator.isValid(12, context);
+        assertThat(result).isFalse();
+        verify(context).buildConstraintViolationWithTemplate(contains("Total experience 12"));
+    }
+
+    @Test
+    void testZeroExperience_shouldBeInvalid() {
+        boolean result = validator.isValid(0, context);
+        assertThat(result).isFalse();
+        verify(context).buildConstraintViolationWithTemplate(contains("Total experience 0"));
+    }
+
+    @Test
+    void testNegativeExperience_shouldBeInvalid() {
+        boolean result = validator.isValid(-3, context);
+        assertThat(result).isFalse();
+        verify(context).buildConstraintViolationWithTemplate(contains("Total experience -3"));
+    }
+
+    @Test
+    void testNullExperience_shouldBeValid() {
+        boolean result = validator.isValid(null, context);
+        assertThat(result).isTrue();
     }
 }

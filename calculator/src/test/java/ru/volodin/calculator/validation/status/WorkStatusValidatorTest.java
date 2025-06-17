@@ -1,71 +1,63 @@
 package ru.volodin.calculator.validation.status;
 
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validation;
-import jakarta.validation.ValidatorFactory;
-import org.junit.jupiter.api.BeforeAll;
+import jakarta.validation.ConstraintValidatorContext;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import jakarta.validation.Validator;
 import ru.volodin.calculator.entity.dto.enums.EmploymentStatus;
-import ru.volodin.calculator.validation.status.ValidWorkStatus;
-
-import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
 
-@SpringBootTest
-public class WorkStatusValidatorTest {
+class WorkStatusValidatorTest {
 
-    @Autowired
-    private static Validator validator;
+    private WorkStatusValidator validator;
+    private ConstraintValidatorContext context;
 
-    @BeforeAll
-    static void setup() {
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        validator = factory.getValidator();
-    }
+    @BeforeEach
+    void setUp() {
+        validator = new WorkStatusValidator();
 
-    // Тестовый класс с аннотацией @ValidWorkStatus
-    static class TestDto {
-        @ValidWorkStatus
-        EmploymentStatus status;
-
-        public TestDto(EmploymentStatus status) {
-            this.status = status;
-        }
+        context = mock(ConstraintValidatorContext.class);
+        ConstraintValidatorContext.ConstraintViolationBuilder builder = mock(ConstraintValidatorContext.ConstraintViolationBuilder.class);
+        when(context.buildConstraintViolationWithTemplate(anyString())).thenReturn(builder);
+        when(builder.addConstraintViolation()).thenReturn(context);
     }
 
     @Test
-    void shouldBeValid_whenStatusIsSELF_MPLOYED() {
-        TestDto dto = new TestDto(EmploymentStatus.SELF_EMPLOYED);
-        Set<ConstraintViolation<TestDto>> violations = validator.validate(dto);
-        assertThat(violations).isEmpty();
+    void testValidStatus_EMPLOYED_shouldReturnTrue() {
+        boolean result = validator.isValid(EmploymentStatus.EMPLOYED, context);
+        assertThat(result).isTrue();
     }
 
     @Test
-    void shouldBeValid_whenStatusIsNull() {
-        TestDto dto = new TestDto(null);
-        Set<ConstraintViolation<TestDto>> violations = validator.validate(dto);
-        assertThat(violations).isEmpty();
+    void testValidStatus_SELF_EMPLOYED_shouldReturnTrue() {
+        boolean result = validator.isValid(EmploymentStatus.SELF_EMPLOYED, context);
+        assertThat(result).isTrue();
     }
 
     @Test
-    void shouldBeInvalid_whenStatusIsUNEMPLOYED() {
-        TestDto dto = new TestDto(EmploymentStatus.UNEMPLOYED);
-        Set<ConstraintViolation<TestDto>> violations = validator.validate(dto);
-        assertThat(violations).isNotEmpty();
-        assertThat(violations.iterator().next().getMessage())
-                .contains("Current status UNEMPLOYED does not match");
+    void testValidStatus_BUSINESS_OWNER_shouldReturnTrue() {
+        boolean result = validator.isValid(EmploymentStatus.BUSINESS_OWNER, context);
+        assertThat(result).isTrue();
     }
 
     @Test
-    void shouldBeInvalid_whenStatusIsUNKNOWN() {
-        TestDto dto = new TestDto(EmploymentStatus.UNKNOWN);
-        Set<ConstraintViolation<TestDto>> violations = validator.validate(dto);
-        assertThat(violations).isNotEmpty();
-        assertThat(violations.iterator().next().getMessage())
-                .contains("Current status UNKNOWN does not match");
+    void testInvalidStatus_UNEMPLOYED_shouldReturnFalse() {
+        boolean result = validator.isValid(EmploymentStatus.UNEMPLOYED, context);
+        assertThat(result).isFalse();
+        verify(context).buildConstraintViolationWithTemplate(contains("Current status UNEMPLOYED"));
+    }
+
+    @Test
+    void testInvalidStatus_UNKNOWN_shouldReturnFalse() {
+        boolean result = validator.isValid(EmploymentStatus.UNKNOWN, context);
+        assertThat(result).isFalse();
+        verify(context).buildConstraintViolationWithTemplate(contains("Current status UNKNOWN"));
+    }
+
+    @Test
+    void testNullStatus_shouldReturnTrue() {
+        boolean result = validator.isValid(null, context);
+        assertThat(result).isTrue();
     }
 }
