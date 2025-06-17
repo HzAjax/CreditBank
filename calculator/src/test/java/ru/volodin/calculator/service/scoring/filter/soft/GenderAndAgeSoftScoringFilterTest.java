@@ -1,82 +1,85 @@
 package ru.volodin.calculator.service.scoring.filter.soft;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.util.ReflectionTestUtils;
 import ru.volodin.calculator.entity.dto.api.request.ScoringDataDto;
 import ru.volodin.calculator.entity.dto.enums.Gender;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
 class GenderAndAgeSoftScoringFilterTest {
 
-    @Autowired
-    protected GenderAndAgeSoftScoringFilter filter;
+    private GenderAndAgeSoftScoringFilter filter;
 
-    private ScoringDataDto createDto(Gender gender, int age) {
-        return ScoringDataDto.builder()
-                .gender(gender)
-                .birthdate(LocalDate.now().minusYears(age))
+    @BeforeEach
+    void setUp() {
+        filter = new GenderAndAgeSoftScoringFilter();
+
+        ReflectionTestUtils.setField(filter, "minAgeFemale", 32);
+        ReflectionTestUtils.setField(filter, "maxAgeFemale", 60);
+        ReflectionTestUtils.setField(filter, "minAgeMale", 30);
+        ReflectionTestUtils.setField(filter, "maxAgeMale", 55);
+
+        ReflectionTestUtils.setField(filter, "changeRateNormalGenderValue", new BigDecimal("-3"));
+        ReflectionTestUtils.setField(filter, "changeRateNotBinaryValue", new BigDecimal("7"));
+    }
+
+    @Test
+    void testFemaleWithinRange_shouldReturnDecreaseRate() {
+        ScoringDataDto dto = ScoringDataDto.builder()
+                .gender(Gender.FEMALE)
+                .birthdate(LocalDate.now().minusYears(40))
                 .build();
+
+        BigDecimal delta = filter.rateDelta(dto);
+        assertThat(delta).isEqualByComparingTo("-3");
     }
 
     @Test
-    void testFemaleWithinAgeRange() {
-        ScoringDataDto dto = createDto(Gender.FEMALE, 40);
-        assertEquals(BigDecimal.valueOf(-3), filter.rateDelta(dto));
+    void testMaleWithinRange_shouldReturnDecreaseRate() {
+        ScoringDataDto dto = ScoringDataDto.builder()
+                .gender(Gender.MALE)
+                .birthdate(LocalDate.now().minusYears(35))
+                .build();
+
+        BigDecimal delta = filter.rateDelta(dto);
+        assertThat(delta).isEqualByComparingTo("-3");
     }
 
     @Test
-    void testFemaleOutsideAgeRange() {
-        ScoringDataDto dto = createDto(Gender.FEMALE, 25);
-        assertEquals(BigDecimal.ZERO, filter.rateDelta(dto));
-    }
-
-    @Test
-    void testMaleWithinAgeRange() {
-        ScoringDataDto dto = createDto(Gender.MALE, 35);
-        assertEquals(BigDecimal.valueOf(-3), filter.rateDelta(dto));
-    }
-
-    @Test
-    void testMaleOutsideAgeRange() {
-        ScoringDataDto dto = createDto(Gender.MALE, 60);
-        assertEquals(BigDecimal.ZERO, filter.rateDelta(dto));
-    }
-
-    @Test
-    void testOtherGender() {
-        ScoringDataDto dto = createDto(Gender.OTHER, 30);
-        assertEquals(BigDecimal.valueOf(7), filter.rateDelta(dto));
-    }
-
-    @Test
-    void testInsuranceDeltaAlwaysZero() {
-        ScoringDataDto dto = createDto(Gender.MALE, 40);
-        assertEquals(BigDecimal.ZERO, filter.insuranceDelta(dto));
-    }
-
-    @Test
-    void testGenderOther_shouldReturnPositiveRateDelta() {
+    void testOtherGender_shouldReturnIncreaseRate() {
         ScoringDataDto dto = ScoringDataDto.builder()
                 .gender(Gender.OTHER)
-                .birthdate(LocalDate.now().minusYears(25))
+                .birthdate(LocalDate.now().minusYears(40))
                 .build();
 
-        assertEquals(BigDecimal.valueOf(7), filter.rateDelta(dto));
+        BigDecimal delta = filter.rateDelta(dto);
+        assertThat(delta).isEqualByComparingTo("7");
     }
 
     @Test
-    void testGenderInRangeButWrongAge_shouldReturnZero() {
+    void testOutOfRange_shouldReturnZero() {
         ScoringDataDto dto = ScoringDataDto.builder()
                 .gender(Gender.MALE)
                 .birthdate(LocalDate.now().minusYears(20))
                 .build();
 
-        assertEquals(BigDecimal.ZERO, filter.rateDelta(dto));
+        BigDecimal delta = filter.rateDelta(dto);
+        assertThat(delta).isEqualByComparingTo("0");
+    }
+
+    @Test
+    void testInsuranceDelta_shouldAlwaysReturnZero() {
+        ScoringDataDto dto = ScoringDataDto.builder()
+                .gender(Gender.FEMALE)
+                .birthdate(LocalDate.now().minusYears(40))
+                .build();
+
+        BigDecimal delta = filter.insuranceDelta(dto);
+        assertThat(delta).isEqualByComparingTo("0");
     }
 }

@@ -10,10 +10,7 @@ import ru.volodin.calculator.configuration.ScoringFilterProperties;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class ExperienceCurrentValidator implements ConstraintValidator<ValidExperienceCurrent, Integer> {
-
-    private final ScoringFilterProperties scoringProps;
 
     @Value("${scoring.filters.hard.experience.current}")
     private int min;

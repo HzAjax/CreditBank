@@ -10,7 +10,5 @@ public interface ScoringProvider {
 
     BigDecimal[] fullScoring(ScoringDataDto scoringDataDto);
 
-    BigDecimal[] softScoring(ScoringDataDto scoringDataDto, BigDecimal rate);
-
     List<SimpleScoringInfoDto> simpleScoring();
 }

@@ -10,10 +10,7 @@ import ru.volodin.calculator.configuration.ScoringFilterProperties;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class ExperienceTotalValidator implements ConstraintValidator<ValidExperienceTotal, Integer> {
-
-    private final ScoringFilterProperties scoringProps;
 
     @Value("${scoring.filters.hard.experience.total}")
     private int min;

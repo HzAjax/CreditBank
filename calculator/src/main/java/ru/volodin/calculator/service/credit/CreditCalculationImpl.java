@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import ru.volodin.calculator.configuration.ServiceProperties;
 import ru.volodin.calculator.entity.dto.api.response.CreditDto;
 import ru.volodin.calculator.entity.dto.api.response.LoanOfferDto;
 import ru.volodin.calculator.entity.dto.api.response.PaymentScheduleElementDto;
@@ -23,7 +22,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CreditCalculationImpl implements CreditCalculation {
 
-    private final ServiceProperties serviceProps;
     private final CalculatorHelper calculatorHelper;
 
     @Value("${service.calculator.round}")

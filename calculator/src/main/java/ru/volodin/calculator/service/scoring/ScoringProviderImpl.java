@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import ru.volodin.calculator.configuration.ServiceProperties;
 import ru.volodin.calculator.entity.dto.api.request.ScoringDataDto;
 import ru.volodin.calculator.entity.dto.internal.SimpleScoringInfoDto;
 import ru.volodin.calculator.service.scoring.filter.ScoringSoftFilter;
@@ -13,6 +12,7 @@ import ru.volodin.calculator.service.scoring.filter.soft.SalaryClientSoftScoring
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -20,8 +20,6 @@ import java.util.List;
 public class ScoringProviderImpl implements ScoringProvider {
 
     private final List<ScoringSoftFilter> softFilters;
-
-    private final ServiceProperties serviceProps;
 
     @Value("${service.rate}")
     private BigDecimal rate;
@@ -31,17 +29,6 @@ public class ScoringProviderImpl implements ScoringProvider {
 
         log.debug("Scoring data={}, rate={}", scoringDataDto, rate);
 
-        BigDecimal[] result = softScoring(scoringDataDto, rate);
-
-        log.info("Result scoring data={} is {}, insurance cost={}"
-                , scoringDataDto, result[0], result[1]);
-
-        return result;
-    }
-
-    @Override
-    public BigDecimal[] softScoring(ScoringDataDto scoringDataDto, BigDecimal newRate) {
-
         BigDecimal totalRateDelta = BigDecimal.ZERO;
         BigDecimal totalInsurance = BigDecimal.ZERO;
 
@@ -50,14 +37,19 @@ public class ScoringProviderImpl implements ScoringProvider {
             totalInsurance = totalInsurance.add(filter.insuranceDelta(scoringDataDto));
         }
 
-        return new BigDecimal[] { newRate.add(totalRateDelta), totalInsurance };
+        BigDecimal[] result = new BigDecimal[] { rate.add(totalRateDelta), totalInsurance };
+
+        log.info("Result scoring data={} is {}, insurance cost={}"
+                , scoringDataDto, result[0], result[1]);
+
+        return result;
     }
 
     @Override
     public List<SimpleScoringInfoDto> simpleScoring() {
-        return List.of(true, false).stream()
+        return Stream.of(true, false)
                 .flatMap(isInsurance ->
-                        List.of(true, false).stream().map(isSalaryClient ->
+                        Stream.of(true, false).map(isSalaryClient ->
                                 createSimpleScoringInfo(isInsurance, isSalaryClient)
                         )
                 )

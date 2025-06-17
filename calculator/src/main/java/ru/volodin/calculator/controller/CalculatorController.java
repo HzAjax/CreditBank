@@ -69,7 +69,7 @@ public class CalculatorController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorMessageDto.class)))
     })
-        public CreditDto fullCalculateLoanParametersAndScoring(@RequestBody @Valid ScoringDataDto scoringDataDto) {
+    public CreditDto fullCalculateLoanParametersAndScoring(@RequestBody @Valid ScoringDataDto scoringDataDto) {
 
         log.info("Request: POST /calc");
         log.debug("Request, body={}", scoringDataDto);

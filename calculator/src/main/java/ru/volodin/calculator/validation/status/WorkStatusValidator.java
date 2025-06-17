@@ -9,7 +9,6 @@ import ru.volodin.calculator.entity.dto.enums.EmploymentStatus;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class WorkStatusValidator implements ConstraintValidator<ValidWorkStatus, EmploymentStatus> {
     @Override
     public boolean isValid(EmploymentStatus status, ConstraintValidatorContext context) {

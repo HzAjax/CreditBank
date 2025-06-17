@@ -13,10 +13,7 @@ import java.math.BigDecimal;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class AmountValidator implements ConstraintValidator<ValidAmount, ScoringDataDto> {
-
-    private final ScoringFilterProperties scoringProps;
 
     @Value("${scoring.filters.hard.countSalary}")
     private int countSalary;

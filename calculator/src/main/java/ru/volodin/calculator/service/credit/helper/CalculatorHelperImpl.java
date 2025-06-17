@@ -1,9 +1,7 @@
 package ru.volodin.calculator.service.credit.helper;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import ru.volodin.calculator.configuration.ServiceProperties;
 import ru.volodin.calculator.entity.dto.api.response.PaymentScheduleElementDto;
 
 import java.math.BigDecimal;
@@ -14,10 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class CalculatorHelperImpl implements CalculatorHelper{
-
-    private final ServiceProperties serviceProps;
 
     @Value("${service.calculator.round}")
     private Integer countDigitAfterPoint;
