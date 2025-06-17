@@ -20,16 +20,14 @@ class CalculatorHelperImplTest {
     void setUp() {
         helper = new CalculatorHelperImpl();
 
-        // Пример: округляем до 2 знаков после запятой
         ReflectionTestUtils.setField(helper, "countDigitAfterPoint", 2);
     }
 
     @Test
     void testGetMonthlyRate_shouldDivideBy12And100() {
-        BigDecimal rate = new BigDecimal("12"); // 12% годовых
+        BigDecimal rate = new BigDecimal("12");
         BigDecimal result = helper.getMonthlyRate(rate);
 
-        // 12% / 100 / 12 = 0.01
         assertThat(result).isEqualByComparingTo("0.01");
     }
 
@@ -44,21 +42,19 @@ class CalculatorHelperImplTest {
     @Test
     void testGetMonthlyPayment_shouldReturnCorrectValue() {
         BigDecimal amount = new BigDecimal("100000");
-        BigDecimal rate = new BigDecimal("12"); // годовых
+        BigDecimal rate = new BigDecimal("12");
         int term = 12;
 
         BigDecimal payment = helper.getMonthlyPayment(amount, term, rate);
 
-        // ожидается примерно 8884.00 при аннуитетной схеме с 12%
         BigDecimal approx = new BigDecimal("8884.00");
-        assertThat(payment).isNotNull();
-        assertThat(payment).isCloseTo(approx, within(BigDecimal.valueOf(1.00)));
+        assertThat(payment).isNotNull().isCloseTo(approx, within(BigDecimal.valueOf(1.00)));
     }
 
     @Test
     void testGetSchedule_shouldReturnCorrectSizeAndFields() {
         BigDecimal amount = new BigDecimal("100000");
-        BigDecimal rate = new BigDecimal("12"); // годовых
+        BigDecimal rate = new BigDecimal("12");
         int term = 3;
 
         BigDecimal monthlyRate = helper.getMonthlyRate(rate);
@@ -68,7 +64,7 @@ class CalculatorHelperImplTest {
 
         assertThat(schedule).hasSize(term);
 
-        PaymentScheduleElementDto first = schedule.get(0);
+        PaymentScheduleElementDto first = schedule.getFirst();
         assertThat(first.getNumber()).isEqualTo(1);
         assertThat(first.getTotalPayment()).isNotNull();
         assertThat(first.getDate()).isEqualTo(LocalDate.now().plusMonths(1));
@@ -88,6 +84,6 @@ class CalculatorHelperImplTest {
         );
 
         BigDecimal result = helper.getPsk(schedule);
-        assertThat(result).isEqualByComparingTo("2000"); // 100+900+90+910
+        assertThat(result).isEqualByComparingTo("2000");
     }
 }

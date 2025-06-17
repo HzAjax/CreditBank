@@ -20,7 +20,10 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -33,13 +36,13 @@ class CreditCalculationImplTest {
     private CreditCalculationImpl creditCalculation;
 
     @BeforeEach
-    void init() {
+    void setUp() {
         ReflectionTestUtils.setField(creditCalculation, "countDigitAfterPoint", 2);
     }
 
     @Test
     void testGenerateLoanOffer_shouldReturnLoanOfferList_andVerifyCalls() {
-        // arrange
+
         BigDecimal amount = new BigDecimal("100000");
         int term = 12;
         BigDecimal rate = new BigDecimal("10");
@@ -59,10 +62,10 @@ class CreditCalculationImplTest {
         when(calculatorHelper.getSchedule(monthlyPayment, monthlyRate, totalAmount, term)).thenReturn(schedule);
         when(calculatorHelper.getPsk(schedule)).thenReturn(psk);
 
-        // act
+
         List<LoanOfferDto> result = creditCalculation.generateLoanOffer(amount, term, listInfo);
 
-        // assert
+
         assertThat(result).hasSize(1);
         LoanOfferDto offer = result.get(0);
         assertThat(offer.getRequestedAmount()).isEqualByComparingTo(amount);
@@ -72,7 +75,7 @@ class CreditCalculationImplTest {
         assertThat(offer.getIsInsuranceEnabled()).isTrue();
         assertThat(offer.getIsSalaryClient()).isTrue();
 
-        // verify
+
         verify(calculatorHelper).getMonthlyRate(rate);
         verify(calculatorHelper).getMonthlyPayment(totalAmount, term, rate);
         verify(calculatorHelper).getSchedule(monthlyPayment, monthlyRate, totalAmount, term);
@@ -82,7 +85,7 @@ class CreditCalculationImplTest {
 
     @Test
     void testCalculate_shouldReturnCreditDto_andVerifyCalls() {
-        // arrange
+
         ScoringDataDto dto = ScoringDataDto.builder()
                 .amount(new BigDecimal("100000"))
                 .term(12)
@@ -115,10 +118,9 @@ class CreditCalculationImplTest {
         when(calculatorHelper.round(monthlyPayment)).thenReturn(monthlyPayment.setScale(2, RoundingMode.HALF_EVEN));
         when(calculatorHelper.round(psk)).thenReturn(psk.setScale(2, RoundingMode.HALF_EVEN));
 
-        // act
+
         CreditDto result = creditCalculation.calculate(dto, newRate, insurance);
 
-        // assert
         assertThat(result).isNotNull();
         assertThat(result.getAmount()).isEqualByComparingTo("100000");
         assertThat(result.getTerm()).isEqualTo(12);
@@ -129,7 +131,6 @@ class CreditCalculationImplTest {
         assertThat(result.getIsSalaryClient()).isFalse();
         assertThat(result.getPaymentSchedule()).hasSize(1);
 
-        // verify
         verify(calculatorHelper).getMonthlyRate(newRate);
         verify(calculatorHelper).getMonthlyPayment(totalAmount, dto.getTerm(), newRate);
         verify(calculatorHelper).getSchedule(monthlyPayment, monthlyRate, totalAmount, dto.getTerm());
