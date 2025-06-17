@@ -28,17 +28,6 @@ public class ScoringProviderImpl implements ScoringProvider {
 
         log.debug("Scoring data={}, rate={}", scoringDataDto, rate);
 
-        BigDecimal[] result = softScoring(scoringDataDto, rate);
-
-        log.info("Result scoring data={} is {}, insurance cost={}"
-                , scoringDataDto, result[0], result[1]);
-
-        return result;
-    }
-
-    @Override
-    public BigDecimal[] softScoring(ScoringDataDto scoringDataDto, BigDecimal newRate) {
-
         BigDecimal totalRateDelta = BigDecimal.ZERO;
         BigDecimal totalInsurance = BigDecimal.ZERO;
 
@@ -47,7 +36,12 @@ public class ScoringProviderImpl implements ScoringProvider {
             totalInsurance = totalInsurance.add(filter.insuranceDelta(scoringDataDto));
         }
 
-        return new BigDecimal[] { newRate.add(totalRateDelta), totalInsurance };
+        BigDecimal[] result = new BigDecimal[] { rate.add(totalRateDelta), totalInsurance };
+
+        log.info("Result scoring data={} is {}, insurance cost={}"
+                , scoringDataDto, result[0], result[1]);
+
+        return result;
     }
 
     @Override

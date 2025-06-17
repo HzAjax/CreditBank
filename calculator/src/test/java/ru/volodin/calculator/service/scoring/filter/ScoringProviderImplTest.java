@@ -56,15 +56,6 @@ class ScoringProviderImplTest {
     }
 
     @Test
-    void softScoring_shouldApplyAllFiltersWithCustomBaseRate() {
-        ScoringDataDto dto = fullValidDto();
-        BigDecimal[] result = scoringProvider.softScoring(dto, BigDecimal.valueOf(30));
-
-        assertThat(result[0]).isEqualByComparingTo("18");      // 30 -3 -2 -3 -3 +2 = 18
-        assertThat(result[1]).isEqualByComparingTo("100000");
-    }
-
-    @Test
     void simpleScoring_shouldProduceAllCombinations() {
         List<SimpleScoringInfoDto> result = scoringProvider.simpleScoring();
 
