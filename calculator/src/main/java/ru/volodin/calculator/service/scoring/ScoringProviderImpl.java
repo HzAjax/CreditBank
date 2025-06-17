@@ -3,9 +3,7 @@ package ru.volodin.calculator.service.scoring;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-import ru.volodin.calculator.configuration.ServiceProperties;
 import ru.volodin.calculator.entity.dto.api.request.ScoringDataDto;
 import ru.volodin.calculator.entity.dto.internal.SimpleScoringInfoDto;
 import ru.volodin.calculator.service.scoring.filter.ScoringSoftFilter;
@@ -21,8 +19,6 @@ import java.util.List;
 public class ScoringProviderImpl implements ScoringProvider {
 
     private final List<ScoringSoftFilter> softFilters;
-
-    private final ServiceProperties serviceProps;
 
     @Value("${service.rate}")
     private BigDecimal rate;

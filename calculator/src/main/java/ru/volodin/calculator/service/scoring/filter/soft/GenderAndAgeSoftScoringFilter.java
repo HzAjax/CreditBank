@@ -1,12 +1,10 @@
 package ru.volodin.calculator.service.scoring.filter.soft;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import ru.volodin.calculator.configuration.ScoringFilterProperties;
-import ru.volodin.calculator.entity.dto.enums.Gender;
 import ru.volodin.calculator.entity.dto.api.request.ScoringDataDto;
+import ru.volodin.calculator.entity.dto.enums.Gender;
 import ru.volodin.calculator.service.scoring.filter.ScoringSoftFilter;
 
 import java.math.BigDecimal;
@@ -15,10 +13,7 @@ import java.time.temporal.ChronoUnit;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class GenderAndAgeSoftScoringFilter implements ScoringSoftFilter {
-
-    private final ScoringFilterProperties scoringProps;
 
     @Value("${scoring.filters.soft.gender.femaleAge.min}")
     private Integer minAgeFemale;
