@@ -1,0 +1,16 @@
+spring:
+  application:
+  name: Deal
+
+server:
+  port: 8081
+
+logging:
+  level:
+    root: INFO
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
