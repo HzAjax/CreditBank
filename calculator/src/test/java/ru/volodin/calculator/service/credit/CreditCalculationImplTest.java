@@ -36,7 +36,7 @@ class CreditCalculationImplTest {
     private CreditCalculationImpl creditCalculation;
 
     @BeforeEach
-    void init() {
+    void setUp() {
         ReflectionTestUtils.setField(creditCalculation, "countDigitAfterPoint", 2);
     }
 
