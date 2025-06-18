@@ -1,6 +1,6 @@
 spring:
   application:
-  name: CreditBank
+    name: Calculator
 
 server:
   port: 8080
