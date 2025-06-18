@@ -47,7 +47,7 @@ class ScoringProviderImplTest {
     private ScoringProviderImpl scoringProvider;
 
     @BeforeEach
-    void init() {
+    void setUp() {
         scoringProvider = new ScoringProviderImpl(List.of(
                 insuranceFilter, salaryFilter, genderFilter,
                 maritalStatusFilter, workPositionFilter, workStatusFilter
