@@ -1,0 +1,46 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.4.6'
+	id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'ru.volodin'
+version = '1.0.0'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
+
+ext.versions = [
+		springDoc  : '2.8.8',
+		lombok     : '1.18.30',
+		junit      : '1.10.0'
+]
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation "org.springframework.boot:spring-boot-starter-web"
+	implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${versions.springDoc}"
+
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+
+	compileOnly "org.projectlombok:lombok:${versions.lombok}"
+	annotationProcessor "org.projectlombok:lombok:${versions.lombok}"
+
+	testImplementation "org.springframework.boot:spring-boot-starter-test"
+	testRuntimeOnly "org.junit.platform:junit-platform-launcher:${versions.junit}"
+}
+
+springBoot {
+	mainClass = 'ru.volodin.calculator.CalculatorApplication'
+}
+
+test {
+	useJUnitPlatform()
+}
