@@ -67,4 +67,15 @@ public class LoanOfferDto {
             example = "true"
     )
     private Boolean isSalaryClient;
+
+    public LoanOfferDto(UUID statementId, LoanOfferDto loanOffer) {
+        this.statementId = statementId;
+        this.requestedAmount = loanOffer.getRequestedAmount();
+        this.totalAmount = loanOffer.getTotalAmount();
+        this.term = loanOffer.getTerm();
+        this.monthlyPayment = loanOffer.getMonthlyPayment();
+        this.rate = loanOffer.getRate();
+        this.isInsuranceEnabled = loanOffer.getIsInsuranceEnabled();
+        this.isSalaryClient = loanOffer.getIsSalaryClient();
+    }
 }
