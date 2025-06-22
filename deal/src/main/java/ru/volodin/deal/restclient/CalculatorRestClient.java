@@ -1,4 +1,4 @@
-package ru.volodin.deal.service.restclient;
+package ru.volodin.deal.restclient;
 
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;

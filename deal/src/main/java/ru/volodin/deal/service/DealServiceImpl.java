@@ -23,7 +23,7 @@ import ru.volodin.deal.mappers.CreditMapper;
 import ru.volodin.deal.mappers.ScoringMapper;
 import ru.volodin.deal.repository.ClientRepository;
 import ru.volodin.deal.repository.StatementRepository;
-import ru.volodin.deal.service.restclient.CalculatorRestClient;
+import ru.volodin.deal.restclient.CalculatorRestClient;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -83,7 +83,7 @@ public class DealServiceImpl implements  DealService{
         List<LoanOfferDto> offers = calculatorClient.calculateLoanOffers(loanStatement);
         return offers.stream()
                 .map(oldOffer -> new LoanOfferDto(statement.getStatementId(), oldOffer))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
