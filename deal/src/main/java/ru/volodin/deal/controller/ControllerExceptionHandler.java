@@ -44,5 +44,13 @@ public class ControllerExceptionHandler {
                 .body(new ErrorMessageDto(message));
     }
 
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorMessageDto> handleAllUncaughtException(Exception e) {
+        log.error("Unexpected error occurred: ", e);
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorMessageDto("Internal server error: " + e.getMessage()));
+    }
+
 }
 
