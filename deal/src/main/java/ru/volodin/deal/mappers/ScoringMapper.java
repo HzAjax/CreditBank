@@ -12,7 +12,7 @@ public interface ScoringMapper {
     @Mapping(target = "term", source = "statement.appliedOffer.term")
     @Mapping(target = "isInsuranceEnabled", source = "statement.appliedOffer.isInsuranceEnabled")
     @Mapping(target = "isSalaryClient", source = "statement.appliedOffer.isSalaryClient")
-    @Mapping(target = "firstname", source = "statement.client.firstName")
+    @Mapping(target = "firstName", source = "statement.client.firstName")
     @Mapping(target = "lastName", source = "statement.client.lastName")
     @Mapping(target = "middleName", source = "statement.client.middleName")
     @Mapping(target = "email", source = "statement.client.email")

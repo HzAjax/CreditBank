@@ -20,7 +20,7 @@ public interface ClientMapper {
     @Mapping(target = "client.passport.issueDate", source = "passportIssueDate")
     @Mapping(target = "client.passport.issueBranch", source = "passportIssueBranch")
     @Mapping(target = "employment", source = "employment")
-    @Mapping(target = "client.employment.inn", source = "employment.employerINN")
+    @Mapping(target = "client.employment.employerInn", source = "employment.employerINN")
     @Mapping(target = "client.employment.status", source = "employment.employmentStatus")
     @Mapping(target = "accountNumber", source = "accountNumber")
     void updateClientFromScoringData(@MappingTarget Client client, ScoringDataDto scoringDataDto);

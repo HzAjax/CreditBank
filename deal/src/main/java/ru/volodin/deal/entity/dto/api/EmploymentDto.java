@@ -29,7 +29,6 @@ public class EmploymentDto {
             example = "BUSINESS_OWNER"
     )
     @NotNull(message = "Employment status must not be null")
-
     private EmploymentStatus employmentStatus;
 
     @Schema(

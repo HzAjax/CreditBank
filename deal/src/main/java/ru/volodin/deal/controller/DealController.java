@@ -29,7 +29,10 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/deal")
 @RequiredArgsConstructor
-@Tag(name="", description = "")
+@Tag(
+        name = "Deal API",
+        description = "Операции по заявкам: расчёт предложений, выбор оффера, завершение регистрации и финальный расчёт кредита"
+)
 public class DealController {
 
     private final DealService dealService;
@@ -39,7 +42,9 @@ public class DealController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Calculate and save credit"),
             @ApiResponse(responseCode = "400", description = "Invalid format",
-                    content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorMessageDto.class))})})
+                    content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorMessageDto.class))}),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                    content = @Content( mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorMessageDto.class)))})
     public List<LoanOfferDto> calculateLoanOffers(@RequestBody @Valid LoanStatementRequestDto loanStatement) {
 
         log.info("Request: POST /statement");
@@ -56,7 +61,9 @@ public class DealController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Select offer"),
             @ApiResponse(responseCode = "404", description = "Statement not found",
-                    content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorMessageDto.class))})})
+                    content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorMessageDto.class))}),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                    content = @Content( mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorMessageDto.class)))})
     public void selectLoanOffer(@RequestBody LoanOfferDto loanOffer) {
 
         log.info("Request: POST /offer/select");
@@ -71,7 +78,9 @@ public class DealController {
             @ApiResponse(responseCode = "404", description = "Statement not found",
                     content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorMessageDto.class))}),
             @ApiResponse(responseCode = "422", description = "The request could not be completed",
-                    content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorMessageDto.class))})})
+                    content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorMessageDto.class))}),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                    content = @Content( mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorMessageDto.class)))})
     public void calculateCredit(@RequestBody FinishRegistrationRequestDto finishRegistration,
                                 @PathVariable @NotNull UUID statementId) {
 

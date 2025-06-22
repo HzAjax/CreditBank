@@ -73,6 +73,13 @@ public class ScoringDataDto {
     private Gender gender;
 
     @Schema(
+            description = "Client's email",
+            example = "ivan@mail.ru"
+    )
+    @NotBlank(message = "Email is required")
+    private String email;
+
+    @Schema(
             description = "Client's birthdate",
             example = "1990-01-01"
     )
