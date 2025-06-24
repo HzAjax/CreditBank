@@ -2,7 +2,7 @@ package ru.volodin.deal.mappers;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import ru.volodin.deal.entity.Statement;
+import ru.volodin.deal.entity.StatementEntity;
 import ru.volodin.deal.entity.dto.api.FinishRegistrationRequestDto;
 import ru.volodin.deal.entity.dto.api.ScoringDataDto;
 
@@ -20,5 +20,5 @@ public interface ScoringMapper {
     @Mapping(target = "passportSeries", source = "statement.client.passport.series")
     @Mapping(target = "passportNumber", source = "statement.client.passport.number")
     @Mapping(target = "passportIssueBranch", source = "finishRegistration.passportIssueBranch")
-    ScoringDataDto toScoringDataDto(Statement statement, FinishRegistrationRequestDto finishRegistration);
+    ScoringDataDto toScoringDataDto(StatementEntity statement, FinishRegistrationRequestDto finishRegistration);
 }

@@ -20,7 +20,7 @@ import ru.volodin.deal.entity.dto.api.ErrorMessageDto;
 import ru.volodin.deal.entity.dto.api.FinishRegistrationRequestDto;
 import ru.volodin.deal.entity.dto.api.LoanOfferDto;
 import ru.volodin.deal.entity.dto.api.LoanStatementRequestDto;
-import ru.volodin.deal.service.DealService;
+import ru.volodin.deal.service.DealServiceImpl;
 
 import java.util.List;
 import java.util.UUID;
@@ -35,7 +35,7 @@ import java.util.UUID;
 )
 public class DealController {
 
-    private final DealService dealService;
+    private final DealServiceImpl dealService;
 
     @PostMapping("/statement")
     @Operation(summary = "Calculation possible offers")

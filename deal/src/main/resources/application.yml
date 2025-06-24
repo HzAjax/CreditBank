@@ -15,7 +15,7 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
 server:
-  port: 8081
+  port: ${SERVER_PORT:8081}
 
 logging:
   level:
@@ -23,7 +23,7 @@ logging:
 
 client:
   calculator:
-    url: http://localhost:8080
+    url: ${CALCULATOR_URL:http://localhost:8080}
 
 springdoc:
   api-docs:

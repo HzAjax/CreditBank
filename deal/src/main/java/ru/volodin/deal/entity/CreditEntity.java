@@ -12,14 +12,14 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "credits")
+@Table(name = "credit")
 @Getter
 @Setter
 @Builder
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class Credit {
+public class CreditEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "credit_id")

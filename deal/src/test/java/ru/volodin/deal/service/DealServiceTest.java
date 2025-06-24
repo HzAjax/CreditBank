@@ -8,9 +8,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
-import ru.volodin.deal.entity.Client;
-import ru.volodin.deal.entity.Credit;
-import ru.volodin.deal.entity.Statement;
+import ru.volodin.deal.entity.ClientEntity;
+import ru.volodin.deal.entity.CreditEntity;
+import ru.volodin.deal.entity.StatementEntity;
 import ru.volodin.deal.entity.dto.api.CreditDto;
 import ru.volodin.deal.entity.dto.api.FinishRegistrationRequestDto;
 import ru.volodin.deal.entity.dto.api.LoanOfferDto;
@@ -23,7 +23,7 @@ import ru.volodin.deal.entity.jsonb.Passport;
 import ru.volodin.deal.exceptions.ScoringException;
 import ru.volodin.deal.repository.ClientRepository;
 import ru.volodin.deal.repository.StatementRepository;
-import ru.volodin.deal.restclient.CalculatorRestClient;
+import ru.volodin.deal.client.CalculatorRestClient;
 import ru.volodin.deal.mappers.ClientMapper;
 import ru.volodin.deal.mappers.ScoringMapper;
 import ru.volodin.deal.mappers.CreditMapper;
@@ -61,16 +61,16 @@ class DealServiceTest {
     @Test
     void calculateLoanOffersTest() {
         LoanStatementRequestDto loanStatement = new LoanStatementRequestDto();
-        Client client = new Client();
+        ClientEntity client = new ClientEntity();
         client.setPassport(new Passport());
-        Statement statement = new Statement();
+        StatementEntity statement = new StatementEntity();
         statement.setStatementId(UUID.randomUUID());
 
         List<LoanOfferDto> remoteOffers = List.of(new LoanOfferDto(), new LoanOfferDto());
 
         when(clientMapper.toClient(loanStatement)).thenReturn(client);
         when(clientRepository.save(client)).thenReturn(client);
-        when(statementRepository.save(any(Statement.class))).thenReturn(statement);
+        when(statementRepository.save(any(StatementEntity.class))).thenReturn(statement);
         when(calculatorClient.calculateLoanOffers(loanStatement)).thenReturn(remoteOffers);
 
         List<LoanOfferDto> result = dealService.calculateLoanOffers(loanStatement);
@@ -85,7 +85,7 @@ class DealServiceTest {
         LoanOfferDto loanOffer = mock(LoanOfferDto.class);
         when(loanOffer.getStatementId()).thenReturn(statementId);
 
-        Statement statement = mock(Statement.class);
+        StatementEntity statement = mock(StatementEntity.class);
 
         when(statementRepository.findById(statementId)).thenReturn(java.util.Optional.of(statement));
 
@@ -103,11 +103,11 @@ class DealServiceTest {
         FinishRegistrationRequestDto finishDto = new FinishRegistrationRequestDto();
         ScoringDataDto scoringDto = new ScoringDataDto();
         CreditDto creditDto = new CreditDto();
-        Credit credit = new Credit();
+        CreditEntity credit = new CreditEntity();
 
-        Client client = new Client();
+        ClientEntity client = new ClientEntity();
         client.setEmployment(new Employment());
-        Statement statement = new Statement();
+        StatementEntity statement = new StatementEntity();
         statement.setStatementId(statementId);
         statement.setClient(client);
         statement.setAppliedOffer(new LoanOfferDto());
@@ -133,10 +133,10 @@ class DealServiceTest {
     @Test
     void calculateCredit_setDeniedStatus() {
         UUID statementId = UUID.randomUUID();
-        Statement statement = new Statement();
+        StatementEntity statement = new StatementEntity();
         statement.setStatementId(statementId);
         statement.setAppliedOffer(new LoanOfferDto());
-        statement.setClient(new Client());
+        statement.setClient(new ClientEntity());
 
         FinishRegistrationRequestDto finishDto = new FinishRegistrationRequestDto();
         ScoringDataDto scoringDto = new ScoringDataDto();
@@ -163,7 +163,7 @@ class DealServiceTest {
     @Test
     void calculateCredit_ThrowException() {
         UUID statementId = UUID.randomUUID();
-        Statement statement = new Statement();
+        StatementEntity statement = new StatementEntity();
         statement.setStatementId(statementId);
 
         FinishRegistrationRequestDto finishDto = new FinishRegistrationRequestDto();

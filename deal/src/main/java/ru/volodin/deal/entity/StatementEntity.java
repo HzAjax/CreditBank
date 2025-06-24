@@ -15,14 +15,14 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "statements")
+@Table(name = "statement")
 @Getter
 @Setter
 @Builder
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class Statement {
+public class StatementEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "statement_id")
@@ -30,11 +30,11 @@ public class Statement {
 
     @OneToOne
     @JoinColumn(name = "client_id", referencedColumnName = "client_id")
-    private Client client;
+    private ClientEntity client;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "credit_id", referencedColumnName = "credit_id")
-    private Credit credit;
+    private CreditEntity credit;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "application_status")
@@ -44,7 +44,7 @@ public class Statement {
     private LocalDateTime creationDate;
 
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "applied_offer", columnDefinition = "jsonb")
+    @Column(name = "applied_offer")
     private LoanOfferDto appliedOffer;
 
     @Column(name = "sign_date", columnDefinition = "timestamp")
@@ -54,8 +54,8 @@ public class Statement {
     private String code;
 
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "status_history", columnDefinition = "jsonb")
-    private List<StatusHistory> statusHistory;
+    @Column(name = "status_history")
+    private List<StatusHistory> statusHistory = new ArrayList<>();
 
     public void setStatus(ApplicationStatus status, ChangeType type) {
         this.status = status;
@@ -67,9 +67,6 @@ public class Statement {
     }
 
     public void addStatusHistory(StatusHistory status) {
-        if (statusHistory == null) {
-            statusHistory = new ArrayList<>();
-        }
         statusHistory.add(status);
     }
 }

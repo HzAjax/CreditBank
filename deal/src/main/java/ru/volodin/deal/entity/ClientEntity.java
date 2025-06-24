@@ -14,14 +14,14 @@ import java.util.UUID;
 
 
 @Entity
-@Table(name = "clients")
+@Table(name = "client")
 @Getter
 @Setter
 @Builder
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class Client {
+public class ClientEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "client_id")
@@ -54,11 +54,11 @@ public class Client {
     private Integer dependentAmount;
 
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "passport_id", columnDefinition = "jsonb")
+    @Column(name = "passport_id")
     private Passport passport;
 
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "employment_id", columnDefinition = "jsonb")
+    @Column(name = "employment_id")
     private Employment employment;
 
     @Column(name = "account_number")
