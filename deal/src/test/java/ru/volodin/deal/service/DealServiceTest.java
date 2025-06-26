@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
+import ru.volodin.deal.client.CalculatorHttpClient;
 import ru.volodin.deal.entity.ClientEntity;
 import ru.volodin.deal.entity.CreditEntity;
 import ru.volodin.deal.entity.StatementEntity;
@@ -23,7 +24,6 @@ import ru.volodin.deal.entity.jsonb.Passport;
 import ru.volodin.deal.exceptions.ScoringException;
 import ru.volodin.deal.repository.ClientRepository;
 import ru.volodin.deal.repository.StatementRepository;
-import ru.volodin.deal.client.CalculatorRestClient;
 import ru.volodin.deal.mappers.ClientMapper;
 import ru.volodin.deal.mappers.ScoringMapper;
 import ru.volodin.deal.mappers.CreditMapper;
@@ -53,7 +53,7 @@ class DealServiceTest {
     @Mock
     private CreditMapper creditMapper;
     @Mock
-    private CalculatorRestClient calculatorClient;
+    private CalculatorHttpClient calculatorClient;
 
     @InjectMocks
     private DealServiceImpl dealService;

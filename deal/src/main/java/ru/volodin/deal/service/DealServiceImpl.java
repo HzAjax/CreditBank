@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
+import ru.volodin.deal.client.CalculatorHttpClient;
 import ru.volodin.deal.entity.ClientEntity;
 import ru.volodin.deal.entity.CreditEntity;
 import ru.volodin.deal.entity.StatementEntity;
@@ -17,13 +18,13 @@ import ru.volodin.deal.entity.dto.api.ScoringDataDto;
 import ru.volodin.deal.entity.dto.enums.ApplicationStatus;
 import ru.volodin.deal.entity.dto.enums.ChangeType;
 import ru.volodin.deal.entity.dto.enums.CreditStatus;
+import ru.volodin.deal.entity.jsonb.StatusHistory;
 import ru.volodin.deal.exceptions.ScoringException;
 import ru.volodin.deal.mappers.ClientMapper;
 import ru.volodin.deal.mappers.CreditMapper;
 import ru.volodin.deal.mappers.ScoringMapper;
 import ru.volodin.deal.repository.ClientRepository;
 import ru.volodin.deal.repository.StatementRepository;
-import ru.volodin.deal.client.CalculatorRestClient;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -41,7 +42,7 @@ public class DealServiceImpl {
     private final ScoringMapper scoringMapper;
     private final CreditMapper creditMapper;
 
-    private final CalculatorRestClient calculatorClient;
+    private final CalculatorHttpClient calculatorClient;
 
     public List<LoanOfferDto> calculateLoanOffers(LoanStatementRequestDto loanStatement) {
 
@@ -73,12 +74,18 @@ public class DealServiceImpl {
     private StatementEntity createStatement(ClientEntity client) {
         StatementEntity statement = new StatementEntity();
         statement.setCreationDate(LocalDateTime.now());
-        statement.setStatus(ApplicationStatus.PREAPPROVAL, ChangeType.AUTOMATIC);
+        statement.setStatus(ApplicationStatus.PREAPPROVAL);
         statement.setClient(client);
+
+        statement.getStatusHistory().add(StatusHistory.builder()
+                .status(ApplicationStatus.PREAPPROVAL.name())
+                .type(ChangeType.AUTOMATIC)
+                .time(LocalDateTime.now())
+                .build());
+
         StatementEntity savedStatement = statementRepository.save(statement);
 
         log.debug("Statement with ID {} has been created.", savedStatement.getStatementId());
-
         return savedStatement;
     }
 
@@ -93,7 +100,7 @@ public class DealServiceImpl {
         UUID statementId = loanOffer.getStatementId();
         StatementEntity statement = getStatementById(statementId);
         statement.setAppliedOffer(loanOffer);
-        statement.setStatus(ApplicationStatus.APPROVED, ChangeType.AUTOMATIC);
+        updateStatus(statementId, ApplicationStatus.APPROVED, ChangeType.AUTOMATIC);
         statementRepository.save(statement);
 
         log.debug("Loan offer selected and statement ID {} updated to status APPROVED.", statementId);
@@ -112,10 +119,10 @@ public class DealServiceImpl {
 
         try {
             creditDto = calculatorClient.getCredit(scoringDataDto);
-            statement.setStatus(ApplicationStatus.CC_APPROVED, ChangeType.AUTOMATIC);
+            updateStatus(statementId, ApplicationStatus.CC_APPROVED, ChangeType.AUTOMATIC);
         } catch (HttpClientErrorException e) {
             if (e.getStatusCode() == HttpStatus.UNPROCESSABLE_ENTITY) {
-                statement.setStatus(ApplicationStatus.CC_DENIED, ChangeType.AUTOMATIC);
+                updateStatus(statementId, ApplicationStatus.CC_DENIED, ChangeType.AUTOMATIC);
                 statementRepository.save(statement);
 
                 throw new ScoringException(e.getResponseBodyAsString());
@@ -151,5 +158,21 @@ public class DealServiceImpl {
         clientMapper.updateClientFromScoringData(client, scoringDataDto);
         client.getEmployment().setEmploymentUUID(UUID.randomUUID());
         clientRepository.save(client);
+    }
+
+    private void updateStatus(UUID statementId, ApplicationStatus status, ChangeType type) {
+        StatementEntity statement = statementRepository.findById(statementId)
+                .orElseThrow(() -> new EntityNotFoundException("Statement not found"));
+
+        statement.setStatus(status);
+        statement.getStatusHistory().add(
+                StatusHistory.builder()
+                        .status(status.name())
+                        .type(type)
+                        .time(LocalDateTime.now())
+                        .build()
+        );
+
+        statementRepository.save(statement);
     }
 }

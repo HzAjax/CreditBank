@@ -23,7 +23,7 @@ logging:
 
 client:
   calculator:
-    url: ${CALCULATOR_URL:http://localhost:8080}
+    url: ${CALCULATOR_URL:http://localhost:8080/calculator}
 
 springdoc:
   api-docs:

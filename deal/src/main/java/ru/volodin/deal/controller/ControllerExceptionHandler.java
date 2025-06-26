@@ -4,7 +4,11 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.volodin.deal.entity.dto.api.ErrorMessageDto;
@@ -41,6 +45,42 @@ public class ControllerExceptionHandler {
 
         return ResponseEntity
                 .status(HttpStatus.UNPROCESSABLE_ENTITY)
+                .body(new ErrorMessageDto(message));
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorMessageDto> handleHttpMessageNotReadable(HttpMessageNotReadableException e) {
+        String message = e.getMostSpecificCause().getMessage();
+        log.warn("Malformed JSON or unreadable body: {}", message);
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorMessageDto("Invalid request body: " + message));
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ErrorMessageDto> handleMethodNotSupported(HttpRequestMethodNotSupportedException e) {
+        String message = "HTTP method not supported: " + e.getMethod();
+        log.warn(message);
+        return ResponseEntity
+                .status(HttpStatus.METHOD_NOT_ALLOWED)
+                .body(new ErrorMessageDto(message));
+    }
+
+    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+    public ResponseEntity<ErrorMessageDto> handleMediaTypeNotSupported(HttpMediaTypeNotSupportedException e) {
+        String message = "Unsupported media type: " + e.getContentType();
+        log.warn(message);
+        return ResponseEntity
+                .status(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
+                .body(new ErrorMessageDto(message));
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<ErrorMessageDto> handleMissingParameter(MissingServletRequestParameterException e) {
+        String message = "Missing request parameter: " + e.getParameterName();
+        log.warn(message);
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorMessageDto(message));
     }
 

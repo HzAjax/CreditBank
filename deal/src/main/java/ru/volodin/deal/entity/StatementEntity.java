@@ -1,12 +1,26 @@
 package ru.volodin.deal.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 import ru.volodin.deal.entity.dto.api.LoanOfferDto;
 import ru.volodin.deal.entity.dto.enums.ApplicationStatus;
-import ru.volodin.deal.entity.dto.enums.ChangeType;
 import ru.volodin.deal.entity.jsonb.StatusHistory;
 
 import java.time.LocalDateTime;
@@ -53,18 +67,10 @@ public class StatementEntity {
     @Column(name = "ses_code")
     private String code;
 
+    @Builder.Default
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "status_history")
     private List<StatusHistory> statusHistory = new ArrayList<>();
-
-    public void setStatus(ApplicationStatus status, ChangeType type) {
-        this.status = status;
-        addStatusHistory(StatusHistory.builder()
-                .status(status.name())
-                .time(LocalDateTime.now())
-                .type(type)
-                .build());
-    }
 
     public void addStatusHistory(StatusHistory status) {
         statusHistory.add(status);
