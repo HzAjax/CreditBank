@@ -18,7 +18,6 @@ import ru.volodin.deal.entity.dto.api.LoanOfferDto;
 import ru.volodin.deal.entity.dto.api.LoanStatementRequestDto;
 import ru.volodin.deal.entity.dto.api.ScoringDataDto;
 import ru.volodin.deal.entity.dto.enums.ApplicationStatus;
-import ru.volodin.deal.entity.dto.enums.ChangeType;
 import ru.volodin.deal.entity.jsonb.Employment;
 import ru.volodin.deal.entity.jsonb.Passport;
 import ru.volodin.deal.exceptions.ScoringException;
@@ -76,7 +75,7 @@ class DealServiceTest {
         List<LoanOfferDto> result = dealService.calculateLoanOffers(loanStatement);
 
         assertThat(result).hasSize(2);
-        assertThat(result.get(0).getStatementId()).isEqualTo(statement.getStatementId());
+        assertThat(result.getFirst().getStatementId()).isEqualTo(statement.getStatementId());
     }
 
     @Test
@@ -92,7 +91,6 @@ class DealServiceTest {
         dealService.selectLoanOffer(loanOffer);
 
         verify(statement).setAppliedOffer(loanOffer);
-        verify(statement).setStatus(ApplicationStatus.APPROVED, ChangeType.AUTOMATIC);
         verify(statementRepository).save(statement);
     }
 

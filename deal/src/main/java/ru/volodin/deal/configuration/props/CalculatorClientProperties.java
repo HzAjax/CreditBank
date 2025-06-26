@@ -1,4 +1,4 @@
-package ru.volodin.deal.configuration;
+package ru.volodin.deal.configuration.props;
 
 import lombok.Getter;
 import lombok.Setter;

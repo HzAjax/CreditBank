@@ -5,8 +5,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
-import ru.volodin.deal.client.CalculatorHttpClient;
 import ru.volodin.deal.entity.ClientEntity;
 import ru.volodin.deal.entity.CreditEntity;
 import ru.volodin.deal.entity.StatementEntity;
@@ -25,6 +25,8 @@ import ru.volodin.deal.mappers.CreditMapper;
 import ru.volodin.deal.mappers.ScoringMapper;
 import ru.volodin.deal.repository.ClientRepository;
 import ru.volodin.deal.repository.StatementRepository;
+import ru.volodin.deal.service.retry.RetryableCreditService;
+import ru.volodin.deal.service.retry.RetryableOfferService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -42,7 +44,8 @@ public class DealServiceImpl {
     private final ScoringMapper scoringMapper;
     private final CreditMapper creditMapper;
 
-    private final CalculatorHttpClient calculatorClient;
+    private final RetryableCreditService retryableCreditService;
+    private final RetryableOfferService retryableOfferService;
 
     public List<LoanOfferDto> calculateLoanOffers(LoanStatementRequestDto loanStatement) {
 
@@ -90,7 +93,7 @@ public class DealServiceImpl {
     }
 
     private List<LoanOfferDto> generateLoanOffers(LoanStatementRequestDto loanStatement, StatementEntity statement) {
-        List<LoanOfferDto> offers = calculatorClient.calculateLoanOffers(loanStatement);
+        List<LoanOfferDto> offers = retryableOfferService.getLoanOffersWithRetry(loanStatement);
         return offers.stream()
                 .map(oldOffer -> new LoanOfferDto(statement.getStatementId(), oldOffer))
                 .toList();
@@ -106,6 +109,7 @@ public class DealServiceImpl {
         log.debug("Loan offer selected and statement ID {} updated to status APPROVED.", statementId);
     }
 
+    @Transactional(noRollbackFor = ScoringException.class)
     public void calculateCredit(UUID statementId, FinishRegistrationRequestDto finishRegistration) {
         StatementEntity statement = getStatementById(statementId);
 
@@ -118,7 +122,7 @@ public class DealServiceImpl {
         CreditDto creditDto;
 
         try {
-            creditDto = calculatorClient.getCredit(scoringDataDto);
+            creditDto = retryableCreditService.getCreditWithRetry(scoringDataDto);
             updateStatus(statementId, ApplicationStatus.CC_APPROVED, ChangeType.AUTOMATIC);
         } catch (HttpClientErrorException e) {
             if (e.getStatusCode() == HttpStatus.UNPROCESSABLE_ENTITY) {

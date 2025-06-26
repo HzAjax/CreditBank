@@ -7,6 +7,7 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.client.support.RestClientAdapter;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 import ru.volodin.deal.client.CalculatorHttpClient;
+import ru.volodin.deal.configuration.props.CalculatorClientProperties;
 
 @Configuration
 @EnableConfigurationProperties(CalculatorClientProperties.class)

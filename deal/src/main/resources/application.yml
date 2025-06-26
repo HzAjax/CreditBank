@@ -25,6 +25,11 @@ client:
   calculator:
     url: ${CALCULATOR_URL:http://localhost:8080/calculator}
 
+retry:
+  offers:
+    attempts: 3
+    delay: 1000
+
 springdoc:
   api-docs:
     enabled: true
