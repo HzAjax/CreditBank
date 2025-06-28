@@ -8,6 +8,13 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Getter
 @Setter
 public class CalculatorClientProperties {
-
     private String url;
+    private Path path = new Path();
+
+    @Getter
+    @Setter
+    public static class Path {
+        private String offers;
+        private String calc;
+    }
 }

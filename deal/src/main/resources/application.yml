@@ -25,6 +25,9 @@ logging:
 client:
   calculator:
     url: ${CALCULATOR_URL:http://localhost:8080/calculator}
+    path:
+      offers: ${CALCULATOR_OFFERS_PATH:/offers}
+      calc: ${CALCULATOR_CALC_PATH:/calc}
 
 retry:
   offers:

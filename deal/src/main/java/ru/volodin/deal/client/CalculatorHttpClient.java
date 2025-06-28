@@ -13,9 +13,9 @@ import java.util.List;
 @HttpExchange
 public interface CalculatorHttpClient {
 
-    @PostExchange("/offers")
+    @PostExchange("${client.calculator.path.offers}")
     List<LoanOfferDto> calculateLoanOffers(@RequestBody LoanStatementRequestDto requestDto);
 
-    @PostExchange("/calc")
+    @PostExchange("${client.calculator.path.calc}")
     CreditDto getCredit(@RequestBody ScoringDataDto scoringDataDto);
 }

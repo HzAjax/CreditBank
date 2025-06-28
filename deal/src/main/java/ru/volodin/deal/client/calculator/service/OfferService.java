@@ -1,5 +1,7 @@
-package ru.volodin.deal.service.retry;
+package ru.volodin.deal.client.calculator.service;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
@@ -12,19 +14,17 @@ import ru.volodin.deal.entity.dto.api.LoanStatementRequestDto;
 
 import java.util.List;
 
+@Slf4j
 @Service
-public class RetryableOfferService {
+@RequiredArgsConstructor
+public class OfferService {
 
     private final CalculatorHttpClient calculatorClient;
 
-    public RetryableOfferService(CalculatorHttpClient calculatorClient) {
-        this.calculatorClient = calculatorClient;
-    }
-
     @Retryable(
             retryFor = { HttpServerErrorException.class, ResourceAccessException.class },
-            maxAttemptsExpression = "#{@offerRetryProperties.attempts}",
-            backoff = @Backoff(delayExpression = "#{@offerRetryProperties.delay}")
+            maxAttemptsExpression = "${retry.offers.attempts}",
+            backoff = @Backoff(delayExpression = "${retry.offers.delay}")
     )
     public List<LoanOfferDto> getLoanOffersWithRetry(LoanStatementRequestDto request) {
         return calculatorClient.calculateLoanOffers(request);

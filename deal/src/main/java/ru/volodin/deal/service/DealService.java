@@ -25,8 +25,8 @@ import ru.volodin.deal.mappers.CreditMapper;
 import ru.volodin.deal.mappers.ScoringMapper;
 import ru.volodin.deal.repository.ClientRepository;
 import ru.volodin.deal.repository.StatementRepository;
-import ru.volodin.deal.service.retry.RetryableCreditService;
-import ru.volodin.deal.service.retry.RetryableOfferService;
+import ru.volodin.deal.client.calculator.service.CreditService;
+import ru.volodin.deal.client.calculator.service.OfferService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -35,7 +35,7 @@ import java.util.UUID;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class DealServiceImpl {
+public class DealService {
 
     private final ClientRepository clientRepository;
     private final StatementRepository statementRepository;
@@ -44,8 +44,8 @@ public class DealServiceImpl {
     private final ScoringMapper scoringMapper;
     private final CreditMapper creditMapper;
 
-    private final RetryableCreditService retryableCreditService;
-    private final RetryableOfferService retryableOfferService;
+    private final CreditService retryableCreditService;
+    private final OfferService retryableOfferService;
 
     public List<LoanOfferDto> calculateLoanOffers(LoanStatementRequestDto loanStatement) {
 
@@ -55,51 +55,38 @@ public class DealServiceImpl {
 
         log.info("Received request to get loan offers for client.");
 
-        ClientEntity client = saveClient(loanStatement);
-        StatementEntity statement = createStatement(client);
-        List<LoanOfferDto> offers = generateLoanOffers(loanStatement, statement);
+        ClientEntity mapperClient = clientMapper.toClient(loanStatement);
+        mapperClient.getPassport().setPassportUUID(UUID.randomUUID());
+        ClientEntity client = clientRepository.save(mapperClient);
+
+        StatementEntity statementToSave = new StatementEntity();
+        statementToSave.setCreationDate(LocalDateTime.now());
+        statementToSave.setStatus(ApplicationStatus.PREAPPROVAL);
+        statementToSave.setClient(client);
+        statementToSave.getStatusHistory().add(StatusHistory.builder()
+                .status(ApplicationStatus.PREAPPROVAL.name())
+                .type(ChangeType.AUTOMATIC)
+                .time(LocalDateTime.now())
+                .build());
+        StatementEntity statement = statementRepository.save(statementToSave);
+        log.debug("Statement with ID {} has been created.", statement.getStatementId());
+
+        List<LoanOfferDto> offersFromService = retryableOfferService.getLoanOffersWithRetry(loanStatement);
+                List<LoanOfferDto> offers = offersFromService.stream()
+                .map(oldOffer -> new LoanOfferDto(statement.getStatementId(), oldOffer))
+                .toList();
 
         log.info("Generated {} loan offers for client {}.", offers.size(), client.getClientId());
 
         return offers;
     }
 
-    private ClientEntity saveClient(LoanStatementRequestDto loanStatement) {
-        ClientEntity client = clientMapper.toClient(loanStatement);
-        client.getPassport().setPassportUUID(UUID.randomUUID());
-        ClientEntity savedClient = clientRepository.save(client);
-
-        log.info("Client with ID {} has been saved.", savedClient.getClientId());
-
-        return savedClient;
-    }
-
-    private StatementEntity createStatement(ClientEntity client) {
-        StatementEntity statement = new StatementEntity();
-        statement.setCreationDate(LocalDateTime.now());
-        statement.setStatus(ApplicationStatus.PREAPPROVAL);
-        statement.setClient(client);
-
-        statement.getStatusHistory().add(StatusHistory.builder()
-                .status(ApplicationStatus.PREAPPROVAL.name())
-                .type(ChangeType.AUTOMATIC)
-                .time(LocalDateTime.now())
-                .build());
-
-        StatementEntity savedStatement = statementRepository.save(statement);
-
-        log.debug("Statement with ID {} has been created.", savedStatement.getStatementId());
-        return savedStatement;
-    }
-
-    private List<LoanOfferDto> generateLoanOffers(LoanStatementRequestDto loanStatement, StatementEntity statement) {
-        List<LoanOfferDto> offers = retryableOfferService.getLoanOffersWithRetry(loanStatement);
-        return offers.stream()
-                .map(oldOffer -> new LoanOfferDto(statement.getStatementId(), oldOffer))
-                .toList();
-    }
-
     public void selectLoanOffer(LoanOfferDto loanOffer) {
+
+        if (loanOffer == null || loanOffer.getStatementId() == null) {
+            throw new IllegalArgumentException("Loan offer or statement ID must not be null");
+        }
+
         UUID statementId = loanOffer.getStatementId();
         StatementEntity statement = getStatementById(statementId);
         statement.setAppliedOffer(loanOffer);
@@ -135,16 +122,6 @@ public class DealServiceImpl {
         }
         log.debug("Mapping CreditDto={} to Credit entity for statement ID {}.", creditDto, statementId);
 
-        updateCredit(statement, creditDto);
-        updateClient(statement.getClient(), scoringDataDto);
-    }
-
-    public StatementEntity getStatementById(UUID statementId) {
-        return statementRepository.findById(statementId)
-                .orElseThrow(() -> new EntityNotFoundException("StatementId " + statementId + " not found"));
-    }
-
-    private void updateCredit(StatementEntity statement, CreditDto creditDto) {
         log.debug("Updating credit for statement ID {}.", statement.getStatementId());
 
         CreditEntity credit = creditMapper.toCredit(creditDto);
@@ -154,14 +131,19 @@ public class DealServiceImpl {
             statement.setCredit(credit);
             statementRepository.save(statement);
         }
-    }
 
-    private void updateClient(ClientEntity client, ScoringDataDto scoringDataDto) {
+        ClientEntity client = statement.getClient();
+
         log.debug("Updating client with ID {} using finish registration data.", client.getClientId());
 
         clientMapper.updateClientFromScoringData(client, scoringDataDto);
         client.getEmployment().setEmploymentUUID(UUID.randomUUID());
         clientRepository.save(client);
+    }
+
+    public StatementEntity getStatementById(UUID statementId) {
+        return statementRepository.findById(statementId)
+                .orElseThrow(() -> new EntityNotFoundException("StatementId " + statementId + " not found"));
     }
 
     private void updateStatus(UUID statementId, ApplicationStatus status, ChangeType type) {

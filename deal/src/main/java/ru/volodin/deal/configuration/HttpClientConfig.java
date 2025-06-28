@@ -1,5 +1,7 @@
 package ru.volodin.deal.configuration;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,7 +13,10 @@ import ru.volodin.deal.configuration.props.CalculatorClientProperties;
 
 @Configuration
 @EnableConfigurationProperties(CalculatorClientProperties.class)
+@RequiredArgsConstructor
 public class HttpClientConfig {
+
+    private final ConfigurableBeanFactory beanFactory;
 
     @Bean
     public CalculatorHttpClient calculatorHttpClient(CalculatorClientProperties properties) {
@@ -21,7 +26,10 @@ public class HttpClientConfig {
                 .build();
 
         RestClientAdapter adapter = RestClientAdapter.create(restClient);
-        HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(adapter).build();
+        HttpServiceProxyFactory factory = HttpServiceProxyFactory
+                                                .builderFor(adapter)
+                                                .embeddedValueResolver(beanFactory::resolveEmbeddedValue)
+                                                .build();
 
         return factory.createClient(CalculatorHttpClient.class);
     }
