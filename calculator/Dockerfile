@@ -1,5 +1,4 @@
 FROM bellsoft/liberica-openjre-alpine:21.0.5
-ARG JAR_FILE=build/libs/*.jar
-COPY ${JAR_FILE} app.jar
+COPY build/libs/calculator-1.0.0.jar app.jar
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]
