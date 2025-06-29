@@ -47,13 +47,7 @@ public class DealController {
                     content = @Content( mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorMessageDto.class)))})
     public List<LoanOfferDto> calculateLoanOffers(@RequestBody @Valid LoanStatementRequestDto loanStatement) {
 
-        log.info("Request: POST /statement");
-
-        List<LoanOfferDto> loanOffers = dealService.calculateLoanOffers(loanStatement);
-
-        log.info("Response: POST /statement");
-
-        return loanOffers;
+        return dealService.calculateLoanOffers(loanStatement);
     }
 
     @PostMapping("offer/select")
@@ -65,8 +59,6 @@ public class DealController {
             @ApiResponse(responseCode = "500", description = "Internal server error",
                     content = @Content( mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorMessageDto.class)))})
     public void selectLoanOffer(@RequestBody LoanOfferDto loanOffer) {
-
-        log.info("Request: POST /offer/select");
 
         dealService.selectLoanOffer(loanOffer);
     }
@@ -83,8 +75,6 @@ public class DealController {
                     content = @Content( mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorMessageDto.class)))})
     public void calculateCredit(@RequestBody FinishRegistrationRequestDto finishRegistration,
                                 @PathVariable @NotNull UUID statementId) {
-
-        log.info("Request: POST /calculate/{statementId}");
 
         dealService.calculateCredit(statementId, finishRegistration);
     }
