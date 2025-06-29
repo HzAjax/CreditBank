@@ -51,7 +51,7 @@ dependencies {
 }
 
 springBoot {
-	mainClass = 'ru.volodin.calculator.CalculatorApplication'
+	mainClass = 'ru.volodin.deal.DealApplication'
 }
 
 test {

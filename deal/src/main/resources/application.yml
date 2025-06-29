@@ -15,19 +15,24 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
 server:
-  port: ${SERVER_PORT:8081}
+  port: ${SERVER_PORT:8080}
 
 logging:
   level:
     root: INFO
     org.springframework.retry: DEBUG
+    ru.volodin.deal.service: INFO
 
 client:
   calculator:
-    url: ${CALCULATOR_URL:http://localhost:8080/calculator}
+    url: ${CALCULATOR_URL:http://calculator:8080/calculator}
     path:
       offers: ${CALCULATOR_OFFERS_PATH:/offers}
       calc: ${CALCULATOR_CALC_PATH:/calc}
+
+app:
+  logging:
+    http-filter-enabled: true
 
 retry:
   offers:
