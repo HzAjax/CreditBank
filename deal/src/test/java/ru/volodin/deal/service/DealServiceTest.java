@@ -41,7 +41,12 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 
 @ExtendWith(MockitoExtension.class)
 class DealServiceTest {
@@ -159,7 +164,7 @@ class DealServiceTest {
         assertEquals(loanOffer, statement.getAppliedOffer());
         assertEquals(ApplicationStatus.APPROVED, statement.getStatus());
 
-        verify(statementRepository, times(2)).findById(statementId); // getStatementById + updateStatus
+        verify(statementRepository, times(2)).findById(statementId);
         verify(statementRepository, times(2)).save(statement);
     }
 
@@ -182,7 +187,6 @@ class DealServiceTest {
 
     @Test
     void testCalculateCredit_success() {
-        // given
         FinishRegistrationRequestDto finishRegistration = new FinishRegistrationRequestDto();
         StatementEntity st = new StatementEntity();
         ClientEntity client = new ClientEntity();
@@ -199,10 +203,8 @@ class DealServiceTest {
         when(retryableCreditService.getCreditWithRetry(scoringData)).thenReturn(creditDto);
         when(creditMapper.toCredit(creditDto)).thenReturn(credit);
 
-        // when
         dealService.calculateCredit(statementId, finishRegistration);
 
-        // then
         verify(statementRepository, atLeastOnce()).save(st);
         verify(clientRepository).save(client);
         verify(clientMapper).updateClientFromScoringData(client, scoringData);
@@ -210,7 +212,7 @@ class DealServiceTest {
 
     @Test
     void testCalculateCredit_noAppliedOffer_throwsException() {
-        StatementEntity st = new StatementEntity(); // no applied offer
+        StatementEntity st = new StatementEntity();
         when(statementRepository.findById(statementId)).thenReturn(Optional.of(st));
 
         assertThrows(IllegalArgumentException.class,

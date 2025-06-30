@@ -15,7 +15,9 @@ import ru.volodin.deal.configuration.props.LoggingProperties;
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class LoggingFilterTest {
 
@@ -38,7 +40,7 @@ class LoggingFilterTest {
 
         filter.doFilter(request, response, chain);
 
-        verify(chain).doFilter(request, response); // Ensure passthrough
+        verify(chain).doFilter(request, response);
     }
 
     @Test
@@ -51,7 +53,7 @@ class LoggingFilterTest {
 
         filter.doFilter(request, response, chain);
 
-        verify(chain).doFilter(request, response); // Should also pass through
+        verify(chain).doFilter(request, response);
     }
 
     @Test
@@ -71,14 +73,12 @@ class LoggingFilterTest {
             ContentCachingRequestWrapper reqWrapper = (ContentCachingRequestWrapper) request;
             ContentCachingResponseWrapper resWrapper = (ContentCachingResponseWrapper) response;
 
-            // Simulate response body write
             resWrapper.getWriter().write("response-body");
             resWrapper.setStatus(200);
         };
 
         filter.doFilter(servletRequest, servletResponse, chain);
 
-        // Ensure that response body was copied back to response
         String responseContent = servletResponse.getContentAsString();
         assertEquals("response-body", responseContent);
     }
