@@ -21,7 +21,6 @@ logging:
   level:
     root: INFO
     org.springframework.retry: DEBUG
-    ru.volodin.deal.service: INFO
 
 client:
   calculator:

@@ -6,6 +6,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.ContentCachingRequestWrapper;
+import org.springframework.web.util.ContentCachingResponseWrapper;
 import ru.volodin.deal.configuration.props.LoggingProperties;
 
 import java.io.IOException;
@@ -26,19 +28,27 @@ public class LoggingFilter implements Filter {
             return;
         }
 
-        if (request instanceof HttpServletRequest httpRequest &&
-                response instanceof HttpServletResponse httpResponse) {
+        if (request instanceof HttpServletRequest && response instanceof HttpServletResponse) {
+            ContentCachingRequestWrapper wrappedRequest = new ContentCachingRequestWrapper((HttpServletRequest) request);
+            ContentCachingResponseWrapper wrappedResponse = new ContentCachingResponseWrapper((HttpServletResponse) response);
 
-            String method = httpRequest.getMethod();
-            String uri = httpRequest.getRequestURI();
-            String query = httpRequest.getQueryString();
+            String method = wrappedRequest.getMethod();
+            String uri = wrappedRequest.getRequestURI();
+            String query = wrappedRequest.getQueryString();
 
             log.info("Incoming request: {} {}{}", method, uri, query != null ? "?" + query : "");
 
-            chain.doFilter(request, response); // continue filter chain
+            chain.doFilter(wrappedRequest, wrappedResponse);
 
-            int status = httpResponse.getStatus();
+            String requestBody = new String(wrappedRequest.getContentAsByteArray(), wrappedRequest.getCharacterEncoding());
+            String responseBody = new String(wrappedResponse.getContentAsByteArray(), wrappedResponse.getCharacterEncoding());
+
+            int status = wrappedResponse.getStatus();
+            log.debug("Request body: {}", requestBody);
             log.info("Outgoing response: {} {} -> HTTP {}", method, uri, status);
+            log.debug("Response body: {}", responseBody);
+
+            wrappedResponse.copyBodyToResponse();
         } else {
             chain.doFilter(request, response);
         }
