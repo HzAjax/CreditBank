@@ -4,23 +4,33 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.web.util.ContentCachingRequestWrapper;
+import org.springframework.web.util.ContentCachingResponseWrapper;
 import ru.volodin.deal.configuration.props.LoggingProperties;
 
 import java.io.IOException;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 class LoggingFilterTest {
 
-    @Test
-    void shouldSkipLoggingWhenDisabled() throws Exception {
-        LoggingProperties props = mock(LoggingProperties.class);
-        when(props.isHttpFilterEnabled()).thenReturn(false);
+    private LoggingFilter filter;
+    private LoggingProperties loggingProperties;
 
-        LoggingFilter filter = new LoggingFilter(props);
+    @BeforeEach
+    void setUp() {
+        loggingProperties = mock(LoggingProperties.class);
+        filter = new LoggingFilter(loggingProperties);
+    }
+
+    @Test
+    void testFilterDisabled() throws IOException, ServletException {
+        when(loggingProperties.isHttpFilterEnabled()).thenReturn(false);
 
         ServletRequest request = mock(ServletRequest.class);
         ServletResponse response = mock(ServletResponse.class);
@@ -28,47 +38,48 @@ class LoggingFilterTest {
 
         filter.doFilter(request, response, chain);
 
-        verify(chain, times(1)).doFilter(request, response);
-        verifyNoMoreInteractions(chain);
+        verify(chain).doFilter(request, response); // Ensure passthrough
     }
 
     @Test
-    void testDoFilter_logsRequestAndResponse() throws IOException, ServletException {
-        LoggingProperties props = mock(LoggingProperties.class);
-        when(props.isHttpFilterEnabled()).thenReturn(true);
+    void testFilterWithNonHttpRequest() throws IOException, ServletException {
+        when(loggingProperties.isHttpFilterEnabled()).thenReturn(true);
 
-        LoggingFilter filter = new LoggingFilter(props);
-
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        HttpServletResponse response = mock(HttpServletResponse.class);
+        ServletRequest request = mock(ServletRequest.class);
+        ServletResponse response = mock(ServletResponse.class);
         FilterChain chain = mock(FilterChain.class);
-
-        when(request.getMethod()).thenReturn("POST");
-        when(request.getRequestURI()).thenReturn("/deal");
-        when(request.getQueryString()).thenReturn("statement");
-        when(response.getStatus()).thenReturn(200);
 
         filter.doFilter(request, response, chain);
 
-        verify(chain).doFilter(request, response);
-        verify(request).getMethod();
-        verify(request).getRequestURI();
-        verify(response).getStatus();
+        verify(chain).doFilter(request, response); // Should also pass through
     }
 
     @Test
-    void testDoFilter_nonHttpRequest_stillPassesThrough() throws IOException, ServletException {
-        LoggingProperties props = mock(LoggingProperties.class);
-        when(props.isHttpFilterEnabled()).thenReturn(true);
+    void testHttpRequestLogging() throws IOException, ServletException {
+        when(loggingProperties.isHttpFilterEnabled()).thenReturn(true);
 
-        LoggingFilter filter = new LoggingFilter(props);
+        MockHttpServletRequest servletRequest = new MockHttpServletRequest();
+        servletRequest.setMethod("POST");
+        servletRequest.setRequestURI("/test");
+        servletRequest.setQueryString("id=123");
+        servletRequest.setContent("request-body".getBytes());
 
-        ServletRequest req = mock(ServletRequest.class);
-        ServletResponse res = mock(ServletResponse.class);
-        FilterChain chain = mock(FilterChain.class);
+        MockHttpServletResponse servletResponse = new MockHttpServletResponse();
+        servletResponse.setCharacterEncoding("UTF-8");
 
-        filter.doFilter(req, res, chain);
+        FilterChain chain = (request, response) -> {
+            ContentCachingRequestWrapper reqWrapper = (ContentCachingRequestWrapper) request;
+            ContentCachingResponseWrapper resWrapper = (ContentCachingResponseWrapper) response;
 
-        verify(chain).doFilter(req, res);
+            // Simulate response body write
+            resWrapper.getWriter().write("response-body");
+            resWrapper.setStatus(200);
+        };
+
+        filter.doFilter(servletRequest, servletResponse, chain);
+
+        // Ensure that response body was copied back to response
+        String responseContent = servletResponse.getContentAsString();
+        assertEquals("response-body", responseContent);
     }
 }
