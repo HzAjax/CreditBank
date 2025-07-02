@@ -19,12 +19,12 @@ server:
 
 logging:
   level:
-    root: INFO
+    root: DEBUG
     org.springframework.retry: DEBUG
 
 client:
   calculator:
-    url: ${CALCULATOR_URL:http://calculator:8080/calculator}
+    url: ${CALCULATOR_URL:http://localhost:8080/calculator}
     path:
       offers: ${CALCULATOR_OFFERS_PATH:/offers}
       calc: ${CALCULATOR_CALC_PATH:/calc}
