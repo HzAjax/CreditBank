@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: Statement
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/creditbank}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+server:
+  port: ${SERVER_PORT:8080}
+
+logging:
+  level:
+    root: DEBUG
+    org.springframework.retry: DEBUG
+
+client:
+  calculator:
+    url: ${CALCULATOR_URL:http://localhost:8080/calculator}
+    path:
+      offers: ${CALCULATOR_OFFERS_PATH:/offers}
+      calc: ${CALCULATOR_CALC_PATH:/calc}
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
