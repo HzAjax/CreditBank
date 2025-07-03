@@ -38,7 +38,7 @@ public class DealController {
     private final DealService dealService;
 
     @PostMapping("/statement")
-    @Operation(summary = "Calculation possible offers")
+    @Operation(summary = "Calculation possiсble offers")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Calculate and save credit"),
             @ApiResponse(responseCode = "400", description = "Invalid format",

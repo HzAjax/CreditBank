@@ -1,21 +1,9 @@
 spring:
   application:
     name: Statement
-  datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/creditbank}
-    username: ${SPRING_DATASOURCE_USERNAME:postgres}
-    password: ${SPRING_DATASOURCE_PASSWORD:postgres}
-    driver-class-name: org.postgresql.Driver
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: false
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
 
 server:
-  port: ${SERVER_PORT:8080}
+  port: ${SERVER_PORT:8082}
 
 logging:
   level:
@@ -23,11 +11,20 @@ logging:
     org.springframework.retry: DEBUG
 
 client:
-  calculator:
-    url: ${CALCULATOR_URL:http://localhost:8080/calculator}
+  deal:
+    url: ${DEAL_URL:http://localhost:8081/deal}
     path:
-      offers: ${CALCULATOR_OFFERS_PATH:/offers}
-      calc: ${CALCULATOR_CALC_PATH:/calc}
+      statement: ${DEAL_OFFERS_PATH:/statement}
+      select: ${DEAL_SELECT_PATH:/offer/select}
+
+retry:
+  offers:
+    attempts: 3
+    delay: 1000
+
+prescoring:
+  age:
+    min: 18
 
 springdoc:
   api-docs:
