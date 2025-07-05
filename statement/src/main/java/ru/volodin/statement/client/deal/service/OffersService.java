@@ -27,11 +27,22 @@ public class OffersService {
             backoff = @Backoff(delayExpression = "${retry.offers.delay}")
     )
     public List<LoanOfferDto> getLoanOffersWithRetry(LoanStatementRequestDto request) {
-        return dealClient.getStatement(request);
+        log.info("Calling Deal service to get loan offers...");
+        log.debug("LoanStatementRequestDto payload: {}", request);
+        try {
+            List<LoanOfferDto> response = dealClient.getStatement(request);
+            log.info("Successfully received loan offers from Deal service.");
+            log.debug("Received offers: {}", response);
+            return response;
+        } catch (Exception e) {
+            log.warn("Temporary failure when calling Deal service (retryable): {}", e.getMessage());
+            throw e;
+        }
     }
 
     @Recover
     public List<LoanOfferDto> recover(Exception e, LoanStatementRequestDto request) {
+        log.error("Failed to get loan offers from Deal service after all retries. Error: {}", e.getMessage(), e);
         throw new RuntimeException("Loan offers retry failed: " + e.getMessage(), e);
     }
 }

@@ -24,11 +24,20 @@ public class SelectOfferService {
             backoff = @Backoff(delayExpression = "${retry.offers.delay}")
     )
     public void setOfferWithRetry(LoanOfferDto loanOfferDto) {
-        dealClient.setOffer(loanOfferDto);
+        log.info("Calling Deal service: sending LoanOfferDto...");
+        log.debug("LoanOfferDto payload: {}", loanOfferDto);
+        try {
+            dealClient.setOffer(loanOfferDto);
+            log.info("Successfully sent offer to Deal service.");
+        } catch (Exception e) {
+            log.warn("Temporary failure when calling Deal service (retryable): {}", e.getMessage());
+            throw e;
+        }
     }
 
     @Recover
     public void recover(Exception e, LoanOfferDto loanOfferDto) {
+        log.error("Failed to send offer to Deal service after all retries. Error: {}", e.getMessage(), e);
         throw new RuntimeException("Select Loan offer retry failed: " + e.getMessage(), e);
     }
 }

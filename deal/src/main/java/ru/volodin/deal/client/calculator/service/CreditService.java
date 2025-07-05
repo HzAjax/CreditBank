@@ -26,11 +26,22 @@ public class CreditService {
             backoff = @Backoff(delayExpression = "${retry.offers.delay}")
     )
     public CreditDto getCreditWithRetry(ScoringDataDto dto) {
-        return calculatorClient.getCredit(dto);
+        log.info("Calling Calculator service for credit calculation...");
+        log.debug("ScoringDataDto payload: {}", dto);
+        try {
+            CreditDto credit = calculatorClient.getCredit(dto);
+            log.info("Successfully received credit calculation from Calculator service.");
+            log.debug("CreditDto response: {}", credit);
+            return credit;
+        } catch (Exception e) {
+            log.warn("Temporary failure when calling Calculator service (retryable): {}", e.getMessage());
+            throw e;
+        }
     }
 
     @Recover
     public CreditDto recover(Exception e, ScoringDataDto dto) {
+        log.error("Failed to get credit calculation from Calculator service after all retries. Error: {}", e.getMessage(), e);
         throw new ScoringException("Scoring failed after retries: " + e.getMessage());
     }
 }
