@@ -22,6 +22,11 @@ retry:
     attempts: 3
     delay: 1000
 
+app:
+  logging:
+    http-filter-enabled: true
+    level: DEBUG
+
 prescoring:
   age:
     min: 18

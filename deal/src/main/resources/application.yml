@@ -20,11 +20,6 @@ spring:
 server:
   port: ${SERVER_PORT:8081}
 
-logging:
-  level:
-    root: DEBUG
-    org.springframework.retry: DEBUG
-
 client:
   calculator:
     url: ${CALCULATOR_URL:http://localhost:8080/calculator}
@@ -35,6 +30,7 @@ client:
 app:
   logging:
     http-filter-enabled: true
+    level: DEBUG
 
 retry:
   offers:

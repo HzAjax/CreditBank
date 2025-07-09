@@ -1,6 +1,7 @@
 package ru.volodin.deal.service;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.example.mylib.exception.ScoringException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,7 +26,6 @@ import ru.volodin.deal.entity.dto.enums.ApplicationStatus;
 import ru.volodin.deal.entity.jsonb.Employment;
 import ru.volodin.deal.entity.jsonb.Passport;
 import ru.volodin.deal.entity.jsonb.StatusHistory;
-import ru.volodin.deal.exceptions.ScoringException;
 import ru.volodin.deal.mappers.ClientMapper;
 import ru.volodin.deal.mappers.CreditMapper;
 import ru.volodin.deal.mappers.ScoringMapper;

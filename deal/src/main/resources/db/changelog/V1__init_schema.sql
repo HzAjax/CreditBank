@@ -15,11 +15,11 @@ CREATE TABLE IF NOT EXISTS client (
 
 CREATE TABLE IF NOT EXISTS credit (
     credit_id UUID PRIMARY KEY,
-    amount NUMERIC(19, 2),
+    amount NUMERIC,
     term INT,
-    monthly_payment NUMERIC(19, 2),
-    rate NUMERIC(5, 2),
-    psk NUMERIC(6, 4),
+    monthly_payment NUMERIC,
+    rate NUMERIC,
+    psk NUMERIC,
     payment_schedule JSONB,
     insurance_enabled BOOLEAN,
     salary_client BOOLEAN,
