@@ -1,5 +1,6 @@
 package ru.volodin.statement.service;
 
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.volodin.statement.client.deal.service.OffersService;
@@ -16,11 +17,11 @@ public class StatementService {
     private final OffersService retryableOffersService;
     private final SelectOfferService retryableStatementService;
 
-    public List<LoanOfferDto> getLoanOffers (LoanStatementRequestDto loanStatement) {
+    public List<LoanOfferDto> getLoanOffers (@NonNull LoanStatementRequestDto loanStatement) {
         return retryableOffersService.getLoanOffersWithRetry(loanStatement);
     }
 
-    public void selectLoanOffer (LoanOfferDto loanOffer) {
+    public void selectLoanOffer (@NonNull LoanOfferDto loanOffer) {
         retryableStatementService.setOfferWithRetry(loanOffer);
     }
 }

@@ -12,6 +12,7 @@ import ru.volodin.statement.entity.dto.LoanStatementRequestDto;
 
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -29,6 +30,18 @@ class StatementServiceTest {
 
     @InjectMocks
     private StatementService statementService;
+
+    @Test
+    void getLoanOffers_shouldThrowException_whenArgumentIsNull() {
+        assertThatThrownBy(() -> statementService.getLoanOffers(null))
+                .isInstanceOf(NullPointerException.class);
+    }
+
+    @Test
+    void selectLoanOffer_shouldThrowException_whenArgumentIsNull() {
+        assertThatThrownBy(() -> statementService.selectLoanOffer(null))
+                .isInstanceOf(NullPointerException.class);
+    }
 
     @Test
     void getLoanOffers_shouldCallOffersServiceAndReturnList() {
