@@ -7,6 +7,7 @@ import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import ru.volodin.deal.client.CalculatorHttpClient;
@@ -42,6 +43,12 @@ public class CreditService {
     @Recover
     public CreditDto recover(Exception e, ScoringDataDto dto) {
         log.error("Failed to get credit calculation from Calculator service after all retries. Error: {}", e.getMessage(), e);
-        throw new ScoringException("Scoring failed after retries: " + e.getMessage());
+
+        String rawBody = null;
+        if (e instanceof HttpClientErrorException httpEx) {
+            rawBody = httpEx.getResponseBodyAsString();
+        }
+
+        throw new ScoringException("Scoring failed after retries", rawBody, e); // 👈 передаём тело как отдельное поле
     }
 }

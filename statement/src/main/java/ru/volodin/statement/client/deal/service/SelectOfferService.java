@@ -2,10 +2,12 @@ package ru.volodin.statement.client.deal.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.mylib.exception.OffersException;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import ru.volodin.statement.client.DealHttpClient;
@@ -38,6 +40,12 @@ public class SelectOfferService {
     @Recover
     public void recover(Exception e, LoanOfferDto loanOfferDto) {
         log.error("Failed to send offer to Deal service after all retries. Error: {}", e.getMessage(), e);
-        throw new RuntimeException("Select Loan offer retry failed: " + e.getMessage(), e);
+
+        String rawBody = null;
+        if (e instanceof HttpClientErrorException httpEx) {
+            rawBody = httpEx.getResponseBodyAsString();
+        }
+
+        throw new OffersException("Select Loan offer retry failed", rawBody, e);
     }
 }

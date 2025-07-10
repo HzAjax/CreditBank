@@ -2,10 +2,12 @@ package ru.volodin.deal.client.calculator.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.mylib.exception.OffersException;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import ru.volodin.deal.client.CalculatorHttpClient;
@@ -43,6 +45,12 @@ public class OfferService {
     @Recover
     public List<LoanOfferDto> recover(Exception e, LoanStatementRequestDto request) {
         log.error("Failed to get loan offers from Calculator service after all retries. Error: {}", e.getMessage(), e);
-        throw new RuntimeException("Loan offers retry failed: " + e.getMessage(), e);
+
+        String rawBody = null;
+        if (e instanceof HttpClientErrorException httpEx) {
+            rawBody = httpEx.getResponseBodyAsString();
+        }
+
+        throw new OffersException("Loan offers retry failed", rawBody, e);
     }
 }
