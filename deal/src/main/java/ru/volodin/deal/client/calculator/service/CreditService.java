@@ -49,6 +49,6 @@ public class CreditService {
             rawBody = httpEx.getResponseBodyAsString();
         }
 
-        throw new ScoringException("Scoring failed after retries", rawBody, e); // 👈 передаём тело как отдельное поле
+        throw new ScoringException("Scoring failed after retries", rawBody, e);
     }
 }
