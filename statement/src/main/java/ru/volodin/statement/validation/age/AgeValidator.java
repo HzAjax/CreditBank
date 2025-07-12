@@ -14,7 +14,7 @@ import java.time.temporal.ChronoUnit;
 public class AgeValidator implements ConstraintValidator<ValidAge, LocalDate> {
 
     @Value("${prescoring.age.min}")
-    private int min;
+    private Integer min;
 
     @Override
     public boolean isValid(LocalDate birthdate, ConstraintValidatorContext context) {
@@ -24,7 +24,7 @@ public class AgeValidator implements ConstraintValidator<ValidAge, LocalDate> {
             return true;
         }
 
-        int age = (int) ChronoUnit.YEARS.between(birthdate, LocalDate.now());
+        Integer age = (int) ChronoUnit.YEARS.between(birthdate, LocalDate.now());
 
         if (age < min) {
             context.disableDefaultConstraintViolation();

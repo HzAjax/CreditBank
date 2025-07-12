@@ -40,7 +40,8 @@ public class DealController {
     @PostMapping("/statement")
     @Operation(summary = "Calculation possible offers")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Calculate and save credit"),
+            @ApiResponse(responseCode = "200", description = "Calculate and save credit",
+                    content = @Content( mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = LoanOfferDto.class))),
             @ApiResponse(responseCode = "400", description = "Invalid format",
                     content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorMessageDto.class))}),
             @ApiResponse(responseCode = "500", description = "Internal server error",

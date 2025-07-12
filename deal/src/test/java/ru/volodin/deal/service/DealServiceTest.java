@@ -1,7 +1,6 @@
 package ru.volodin.deal.service;
 
 import jakarta.persistence.EntityNotFoundException;
-import org.example.mylib.exception.ScoringException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,6 +30,7 @@ import ru.volodin.deal.mappers.CreditMapper;
 import ru.volodin.deal.mappers.ScoringMapper;
 import ru.volodin.deal.repository.ClientRepository;
 import ru.volodin.deal.repository.StatementRepository;
+import ru.volodin.errorhandling_lib.exception.ScoringException;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
