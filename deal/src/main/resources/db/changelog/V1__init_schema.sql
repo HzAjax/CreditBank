@@ -1,3 +1,7 @@
+CREATE SCHEMA IF NOT EXISTS credit;
+
+SET search_path TO credit;
+
 CREATE TABLE IF NOT EXISTS client (
     client_id UUID PRIMARY KEY,
     last_name VARCHAR(255),
