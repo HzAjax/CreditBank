@@ -28,6 +28,8 @@ client:
       calc: ${CALCULATOR_CALC_PATH:/calc}
 
 app:
+  errorhandling:
+    enabled: true
   logging:
     http-filter-enabled: true
     level: DEBUG

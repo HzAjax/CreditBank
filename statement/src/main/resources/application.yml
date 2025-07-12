@@ -23,6 +23,8 @@ retry:
     delay: 1000
 
 app:
+  errorhandling:
+    enabled: true
   logging:
     http-filter-enabled: true
     level: DEBUG
