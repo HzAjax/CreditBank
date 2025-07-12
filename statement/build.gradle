@@ -29,7 +29,8 @@ repositories {
 dependencies {
 	implementation platform("org.springframework.boot:spring-boot-dependencies:3.5.2")
 
-	implementation 'org.example:mylib:1.0.0'
+	implementation 'ru.volodin:error-handling-lib:1.0.0'
+	implementation 'ru.volodin:logging-lib:1.0.0'
 
 	implementation "org.springframework.boot:spring-boot-starter-web"
 	implementation 'org.springframework.retry:spring-retry'

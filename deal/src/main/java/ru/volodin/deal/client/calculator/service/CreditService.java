@@ -2,7 +2,6 @@ package ru.volodin.deal.client.calculator.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.mylib.exception.ScoringException;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
@@ -13,6 +12,7 @@ import org.springframework.web.client.ResourceAccessException;
 import ru.volodin.deal.client.CalculatorHttpClient;
 import ru.volodin.deal.entity.dto.api.CreditDto;
 import ru.volodin.deal.entity.dto.api.ScoringDataDto;
+import ru.volodin.errorhandling_lib.exception.ScoringException;
 
 @Slf4j
 @Service

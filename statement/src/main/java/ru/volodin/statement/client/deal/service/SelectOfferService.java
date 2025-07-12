@@ -2,7 +2,6 @@ package ru.volodin.statement.client.deal.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.mylib.exception.OffersException;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
@@ -10,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
+import ru.volodin.errorhandling_lib.exception.OffersException;
 import ru.volodin.statement.client.DealHttpClient;
 import ru.volodin.statement.entity.dto.LoanOfferDto;
 

@@ -10,7 +10,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.mylib.dto.ErrorMessageDto;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,6 +20,7 @@ import ru.volodin.deal.entity.dto.api.FinishRegistrationRequestDto;
 import ru.volodin.deal.entity.dto.api.LoanOfferDto;
 import ru.volodin.deal.entity.dto.api.LoanStatementRequestDto;
 import ru.volodin.deal.service.DealService;
+import ru.volodin.errorhandling_lib.dto.ErrorMessageDto;
 
 import java.util.List;
 import java.util.UUID;

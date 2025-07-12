@@ -3,7 +3,6 @@ package ru.volodin.deal.service;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.mylib.exception.ScoringException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +26,7 @@ import ru.volodin.deal.repository.ClientRepository;
 import ru.volodin.deal.repository.StatementRepository;
 import ru.volodin.deal.client.calculator.service.CreditService;
 import ru.volodin.deal.client.calculator.service.OfferService;
+import ru.volodin.errorhandling_lib.exception.ScoringException;
 
 import java.time.LocalDateTime;
 import java.util.List;

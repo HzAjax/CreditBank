@@ -7,10 +7,7 @@ import org.springframework.retry.annotation.EnableRetry;
 import ru.volodin.deal.configuration.props.CalculatorClientProperties;
 import ru.volodin.deal.configuration.props.OfferRetryProperties;
 
-@SpringBootApplication(scanBasePackages = {
-        "ru.volodin.deal",
-        "org.example.mylib"
-})
+@SpringBootApplication
 @EnableConfigurationProperties({CalculatorClientProperties.class, OfferRetryProperties.class})
 @EnableRetry
 public class DealApplication {

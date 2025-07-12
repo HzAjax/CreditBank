@@ -9,7 +9,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.mylib.dto.ErrorMessageDto;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,6 +19,7 @@ import ru.volodin.calculator.entity.dto.api.request.ScoringDataDto;
 import ru.volodin.calculator.entity.dto.api.response.CreditDto;
 import ru.volodin.calculator.entity.dto.api.response.LoanOfferDto;
 import ru.volodin.calculator.service.CalculatorService;
+import ru.volodin.errorhandling_lib.dto.ErrorMessageDto;
 
 import java.util.List;
 
