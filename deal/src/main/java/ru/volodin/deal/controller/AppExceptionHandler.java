@@ -1,4 +1,4 @@
-package ru.volodin.statement.controller;
+package ru.volodin.deal.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -13,9 +13,9 @@ import ru.volodin.errorhandling_lib.exception.ScoringException;
 
 @Slf4j
 @RestControllerAdvice
-public class ControllerExceptionHandler extends ru.volodin.errorhandling_lib.exception.ControllerExceptionHandler {
+public class AppExceptionHandler extends ru.volodin.errorhandling_lib.exception.ControllerExceptionHandler {
 
-    public ControllerExceptionHandler(ObjectMapper objectMapper) {
+    public AppExceptionHandler(ObjectMapper objectMapper) {
         super(objectMapper);
     }
 
