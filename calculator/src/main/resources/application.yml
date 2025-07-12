@@ -9,6 +9,13 @@ logging:
   level:
     root: INFO
 
+app:
+  errorhandling:
+    enabled: true
+  logging:
+    http-filter-enabled: true
+    level: DEBUG
+
 springdoc:
   api-docs:
     enabled: true

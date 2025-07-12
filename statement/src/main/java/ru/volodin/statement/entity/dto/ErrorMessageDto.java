@@ -1,4 +1,4 @@
-package ru.volodin.calculator.entity.dto.api.response;
+package ru.volodin.statement.entity.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
