@@ -19,7 +19,7 @@ import ru.volodin.calculator.entity.dto.api.request.ScoringDataDto;
 import ru.volodin.calculator.entity.dto.api.response.CreditDto;
 import ru.volodin.calculator.entity.dto.api.response.LoanOfferDto;
 import ru.volodin.calculator.service.CalculatorService;
-import ru.volodin.errorhandling_lib.dto.ErrorMessageDto;
+import ru.volodin.errorhandling.dto.ErrorMessageDto;
 
 import java.util.List;
 

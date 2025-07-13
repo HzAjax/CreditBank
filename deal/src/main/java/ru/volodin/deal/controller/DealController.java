@@ -20,7 +20,7 @@ import ru.volodin.deal.entity.dto.api.FinishRegistrationRequestDto;
 import ru.volodin.deal.entity.dto.api.LoanOfferDto;
 import ru.volodin.deal.entity.dto.api.LoanStatementRequestDto;
 import ru.volodin.deal.service.DealService;
-import ru.volodin.errorhandling_lib.dto.ErrorMessageDto;
+import ru.volodin.errorhandling.dto.ErrorMessageDto;
 
 import java.util.List;
 import java.util.UUID;

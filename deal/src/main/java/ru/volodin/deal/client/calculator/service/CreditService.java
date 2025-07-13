@@ -12,7 +12,7 @@ import org.springframework.web.client.ResourceAccessException;
 import ru.volodin.deal.client.CalculatorHttpClient;
 import ru.volodin.deal.entity.dto.api.CreditDto;
 import ru.volodin.deal.entity.dto.api.ScoringDataDto;
-import ru.volodin.errorhandling_lib.exception.ScoringException;
+import ru.volodin.errorhandling.exception.ScoringException;
 
 @Slf4j
 @Service

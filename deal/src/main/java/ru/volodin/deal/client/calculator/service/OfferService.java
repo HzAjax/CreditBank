@@ -12,7 +12,7 @@ import org.springframework.web.client.ResourceAccessException;
 import ru.volodin.deal.client.CalculatorHttpClient;
 import ru.volodin.deal.entity.dto.api.LoanOfferDto;
 import ru.volodin.deal.entity.dto.api.LoanStatementRequestDto;
-import ru.volodin.errorhandling_lib.exception.OffersException;
+import ru.volodin.errorhandling.exception.OffersException;
 
 import java.util.List;
 

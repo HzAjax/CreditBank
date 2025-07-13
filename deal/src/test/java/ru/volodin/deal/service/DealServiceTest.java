@@ -30,7 +30,7 @@ import ru.volodin.deal.mappers.CreditMapper;
 import ru.volodin.deal.mappers.ScoringMapper;
 import ru.volodin.deal.repository.ClientRepository;
 import ru.volodin.deal.repository.StatementRepository;
-import ru.volodin.errorhandling_lib.exception.ScoringException;
+import ru.volodin.errorhandling.exception.ScoringException;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

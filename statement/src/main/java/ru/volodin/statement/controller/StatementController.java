@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.volodin.statement.entity.dto.ErrorMessageDto;
+import ru.volodin.errorhandling.dto.ErrorMessageDto;
 import ru.volodin.statement.entity.dto.LoanOfferDto;
 import ru.volodin.statement.entity.dto.LoanStatementRequestDto;
 import ru.volodin.statement.service.StatementService;

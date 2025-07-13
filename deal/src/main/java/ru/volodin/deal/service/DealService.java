@@ -26,7 +26,7 @@ import ru.volodin.deal.repository.ClientRepository;
 import ru.volodin.deal.repository.StatementRepository;
 import ru.volodin.deal.client.calculator.service.CreditService;
 import ru.volodin.deal.client.calculator.service.OfferService;
-import ru.volodin.errorhandling_lib.exception.ScoringException;
+import ru.volodin.errorhandling.exception.ScoringException;
 
 import java.time.LocalDateTime;
 import java.util.List;

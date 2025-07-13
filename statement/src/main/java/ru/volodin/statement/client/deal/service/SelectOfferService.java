@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
-import ru.volodin.errorhandling_lib.exception.OffersException;
+import ru.volodin.errorhandling.exception.OffersException;
 import ru.volodin.statement.client.DealHttpClient;
 import ru.volodin.statement.entity.dto.LoanOfferDto;
 

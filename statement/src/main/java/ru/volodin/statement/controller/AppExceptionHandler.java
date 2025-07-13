@@ -7,13 +7,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
-import ru.volodin.errorhandling_lib.dto.ErrorMessageDto;
-import ru.volodin.errorhandling_lib.exception.OffersException;
-import ru.volodin.errorhandling_lib.exception.ScoringException;
+import ru.volodin.errorhandling.exception.StandardExceptionHandler;
+import ru.volodin.errorhandling.dto.ErrorMessageDto;
+import ru.volodin.errorhandling.exception.OffersException;
+import ru.volodin.errorhandling.exception.ScoringException;
 
 @Slf4j
 @RestControllerAdvice
-public class AppExceptionHandler extends ru.volodin.errorhandling_lib.exception.ControllerExceptionHandler {
+public class AppExceptionHandler extends StandardExceptionHandler {
 
     public AppExceptionHandler(ObjectMapper objectMapper) {
         super(objectMapper);
