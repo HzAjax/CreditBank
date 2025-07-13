@@ -29,8 +29,7 @@ repositories {
 dependencies {
 	implementation platform("org.springframework.boot:spring-boot-dependencies:3.5.2")
 
-	implementation 'ru.volodin:error-handling-lib:1.0.0'
-	implementation 'ru.volodin:logging-lib:1.0.0'
+	implementation 'ru.volodin:my-lib-starter:1.0.0'
 
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation "org.springframework.boot:spring-boot-starter-web"
