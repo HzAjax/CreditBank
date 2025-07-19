@@ -8,19 +8,18 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     show-sql: false
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+        default_schema: credit
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/master.yml
 
 server:
-  port: ${SERVER_PORT:8080}
-
-logging:
-  level:
-    root: DEBUG
-    org.springframework.retry: DEBUG
+  port: ${SERVER_PORT:8081}
 
 client:
   calculator:
@@ -30,8 +29,11 @@ client:
       calc: ${CALCULATOR_CALC_PATH:/calc}
 
 app:
+  errorhandling:
+    enabled: true
   logging:
     http-filter-enabled: true
+    level: DEBUG
 
 retry:
   offers:

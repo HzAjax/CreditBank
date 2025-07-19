@@ -1,0 +1,42 @@
+spring:
+  application:
+    name: Statement
+
+server:
+  port: ${SERVER_PORT:8082}
+
+logging:
+  level:
+    root: ${LOG_LEVEL_ROOT:DEBUG}
+    org.springframework.retry: DEBUG
+    org.apache.coyote.http11.Http11Processor: INFO
+    org.apache.tomcat.util.net.NioEndpoint: INFO
+
+client:
+  deal:
+    url: ${DEAL_URL:http://localhost:8081/deal}
+    path:
+      statement: ${DEAL_OFFERS_PATH:/statement}
+      select: ${DEAL_SELECT_PATH:/offer/select}
+
+retry:
+  offers:
+    attempts: 3
+    delay: 1000
+
+app:
+  errorhandling:
+    enabled: true
+  logging:
+    http-filter-enabled: true
+    level: DEBUG
+
+prescoring:
+  age:
+    min: 18
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html

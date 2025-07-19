@@ -16,11 +16,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.volodin.deal.entity.dto.api.ErrorMessageDto;
 import ru.volodin.deal.entity.dto.api.FinishRegistrationRequestDto;
 import ru.volodin.deal.entity.dto.api.LoanOfferDto;
 import ru.volodin.deal.entity.dto.api.LoanStatementRequestDto;
 import ru.volodin.deal.service.DealService;
+import ru.volodin.errorhandling.dto.ErrorMessageDto;
 
 import java.util.List;
 import java.util.UUID;
@@ -40,7 +40,8 @@ public class DealController {
     @PostMapping("/statement")
     @Operation(summary = "Calculation possible offers")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Calculate and save credit"),
+            @ApiResponse(responseCode = "200", description = "Calculate and save credit",
+                    content = @Content( mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = LoanOfferDto.class))),
             @ApiResponse(responseCode = "400", description = "Invalid format",
                     content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorMessageDto.class))}),
             @ApiResponse(responseCode = "500", description = "Internal server error",

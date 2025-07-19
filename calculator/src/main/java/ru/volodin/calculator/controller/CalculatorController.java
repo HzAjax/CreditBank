@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.volodin.calculator.entity.dto.api.request.LoanStatementRequestDto;
 import ru.volodin.calculator.entity.dto.api.request.ScoringDataDto;
 import ru.volodin.calculator.entity.dto.api.response.CreditDto;
-import ru.volodin.calculator.entity.dto.api.response.ErrorMessageDto;
 import ru.volodin.calculator.entity.dto.api.response.LoanOfferDto;
 import ru.volodin.calculator.service.CalculatorService;
+import ru.volodin.errorhandling.dto.ErrorMessageDto;
 
 import java.util.List;
 
@@ -45,16 +45,7 @@ public class CalculatorController {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorMessageDto.class)))
     })
     public List<LoanOfferDto> calculatePossibleLoanTerms(@RequestBody @Valid LoanStatementRequestDto loanStatementRequestDto) {
-
-        log.info("Request: POST /offers");
-        log.debug("Request,body={}", loanStatementRequestDto);
-
-        List<LoanOfferDto> loanOfferDto = calculatorService.calculateLoan(loanStatementRequestDto);
-
-        log.debug("Response,body={}", loanOfferDto);
-        log.info("Response: POST /offer");
-
-        return loanOfferDto;
+        return calculatorService.calculateLoan(loanStatementRequestDto);
     }
 
     @PostMapping("/calc")
@@ -70,16 +61,7 @@ public class CalculatorController {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorMessageDto.class)))
     })
     public CreditDto fullCalculateLoanParametersAndScoring(@RequestBody @Valid ScoringDataDto scoringDataDto) {
-
-        log.info("Request: POST /calc");
-        log.debug("Request, body={}", scoringDataDto);
-
-        CreditDto creditDto = calculatorService.calculateCredit(scoringDataDto);
-
-        log.debug("Response, body={}", creditDto);
-        log.info("Response: POST /calc");
-
-        return creditDto;
+        return calculatorService.calculateCredit(scoringDataDto);
     }
 
 }

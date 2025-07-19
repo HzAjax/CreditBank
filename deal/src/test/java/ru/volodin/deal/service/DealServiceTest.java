@@ -25,12 +25,12 @@ import ru.volodin.deal.entity.dto.enums.ApplicationStatus;
 import ru.volodin.deal.entity.jsonb.Employment;
 import ru.volodin.deal.entity.jsonb.Passport;
 import ru.volodin.deal.entity.jsonb.StatusHistory;
-import ru.volodin.deal.exceptions.ScoringException;
 import ru.volodin.deal.mappers.ClientMapper;
 import ru.volodin.deal.mappers.CreditMapper;
 import ru.volodin.deal.mappers.ScoringMapper;
 import ru.volodin.deal.repository.ClientRepository;
 import ru.volodin.deal.repository.StatementRepository;
+import ru.volodin.errorhandling.exception.ScoringException;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
