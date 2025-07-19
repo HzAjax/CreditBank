@@ -1,0 +1,55 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.5.2'
+}
+
+group = 'ru.volodin'
+version = '1.0.0'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
+
+ext.versions = [
+		springDoc  : '2.8.8',
+		lombok     : '1.18.30',
+		junit      : '1.10.0',
+		lombokMapstructBindingVersion : '0.2.0',
+		mapstructVersion : '1.5.5.Final',
+		springBootConfigProcessorVersion : '3.5.2'
+]
+
+repositories {
+	mavenLocal()
+	mavenCentral()
+}
+
+dependencies {
+	implementation platform("org.springframework.boot:spring-boot-dependencies:3.5.2")
+
+	implementation 'ru.volodin:my-lib-starter:1.0.0'
+
+	implementation "org.springframework.boot:spring-boot-starter-web"
+	implementation 'org.springframework.retry:spring-retry'
+	implementation 'org.springframework.boot:spring-boot-starter-aop'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${versions.springDoc}"
+
+	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor:${versions.springBootConfigProcessorVersion}"
+
+	compileOnly "org.projectlombok:lombok:${versions.lombok}"
+	annotationProcessor "org.projectlombok:lombok:${versions.lombok}"
+
+	testImplementation "org.springframework.boot:spring-boot-starter-test"
+	testRuntimeOnly "org.junit.platform:junit-platform-launcher:${versions.junit}"
+}
+
+springBoot {
+	mainClass = 'ru.volodin.statement.StatementApplication'
+}
+
+test {
+	useJUnitPlatform()
+}
