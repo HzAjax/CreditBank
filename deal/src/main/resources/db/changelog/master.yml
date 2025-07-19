@@ -1,0 +1,7 @@
+databaseChangeLog:
+    - changeSet:
+          id: 1
+          author: volodin
+          sqlFile:
+              path: V1__init_schema.sql
+              relativeToChangelogFile: true

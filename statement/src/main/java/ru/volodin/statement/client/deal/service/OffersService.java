@@ -1,4 +1,4 @@
-package ru.volodin.deal.client.calculator.service;
+package ru.volodin.statement.client.deal.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,19 +9,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
-import ru.volodin.deal.client.CalculatorHttpClient;
-import ru.volodin.deal.entity.dto.api.LoanOfferDto;
-import ru.volodin.deal.entity.dto.api.LoanStatementRequestDto;
 import ru.volodin.errorhandling.exception.OffersException;
+import ru.volodin.statement.client.DealHttpClient;
+import ru.volodin.statement.entity.dto.LoanOfferDto;
+import ru.volodin.statement.entity.dto.LoanStatementRequestDto;
 
 import java.util.List;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class OfferService {
+public class OffersService {
 
-    private final CalculatorHttpClient calculatorClient;
+    private final DealHttpClient dealClient;
 
     @Retryable(
             retryFor = { HttpServerErrorException.class, ResourceAccessException.class },
@@ -29,22 +29,22 @@ public class OfferService {
             backoff = @Backoff(delayExpression = "${retry.offers.delay}")
     )
     public List<LoanOfferDto> getLoanOffersWithRetry(LoanStatementRequestDto request) {
-        log.info("Calling Calculator service to calculate loan offers...");
+        log.info("Calling Deal service to get loan offers...");
         log.debug("LoanStatementRequestDto payload: {}", request);
         try {
-            List<LoanOfferDto> offers = calculatorClient.calculateLoanOffers(request);
-            log.info("Successfully received loan offers from Calculator service.");
-            log.debug("Received offers: {}", offers);
-            return offers;
+            List<LoanOfferDto> response = dealClient.getStatement(request);
+            log.info("Successfully received loan offers from Deal service.");
+            log.debug("Received offers: {}", response);
+            return response;
         } catch (Exception e) {
-            log.warn("Temporary failure when calling Calculator service (retryable): {}", e.getMessage());
+            log.warn("Temporary failure when calling Deal service (retryable): {}", e.getMessage());
             throw e;
         }
     }
 
     @Recover
     public List<LoanOfferDto> recover(Exception e, LoanStatementRequestDto request) {
-        log.error("Failed to get loan offers from Calculator service after all retries. Error: {}", e.getMessage(), e);
+        log.error("Failed to get loan offers from Deal service after all retries. Error: {}", e.getMessage(), e);
 
         String rawBody = null;
         if (e instanceof HttpClientErrorException httpEx) {

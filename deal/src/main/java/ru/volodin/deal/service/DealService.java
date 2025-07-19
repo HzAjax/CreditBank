@@ -19,7 +19,6 @@ import ru.volodin.deal.entity.dto.enums.ApplicationStatus;
 import ru.volodin.deal.entity.dto.enums.ChangeType;
 import ru.volodin.deal.entity.dto.enums.CreditStatus;
 import ru.volodin.deal.entity.jsonb.StatusHistory;
-import ru.volodin.deal.exceptions.ScoringException;
 import ru.volodin.deal.mappers.ClientMapper;
 import ru.volodin.deal.mappers.CreditMapper;
 import ru.volodin.deal.mappers.ScoringMapper;
@@ -27,6 +26,7 @@ import ru.volodin.deal.repository.ClientRepository;
 import ru.volodin.deal.repository.StatementRepository;
 import ru.volodin.deal.client.calculator.service.CreditService;
 import ru.volodin.deal.client.calculator.service.OfferService;
+import ru.volodin.errorhandling.exception.ScoringException;
 
 import java.time.LocalDateTime;
 import java.util.List;
