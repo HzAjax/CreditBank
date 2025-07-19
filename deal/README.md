@@ -31,5 +31,9 @@ Credit — оформленный кредит.
 
 StatementStatusHistoryDto — история изменения статусов заявки.
 
+Миграция базы данных (Liquibase)
+
+Все сущности из микросервиса deal описаны в Liquibase-скриптах в формате SQL
+
 Swagger UI доступен по адресу:
 http://localhost:8081/swagger-ui.html

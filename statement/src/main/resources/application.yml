@@ -9,6 +9,8 @@ logging:
   level:
     root: ${LOG_LEVEL_ROOT:DEBUG}
     org.springframework.retry: DEBUG
+    org.apache.coyote.http11.Http11Processor: INFO
+    org.apache.tomcat.util.net.NioEndpoint: INFO
 
 client:
   deal:
