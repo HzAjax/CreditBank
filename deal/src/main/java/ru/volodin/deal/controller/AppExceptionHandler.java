@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import ru.volodin.deal.exceptions.InvalidSesCode;
 import ru.volodin.errorhandling.dto.ErrorMessageDto;
 import ru.volodin.errorhandling.exception.OffersException;
 import ru.volodin.errorhandling.exception.ScoringException;
@@ -73,6 +74,14 @@ public class AppExceptionHandler extends StandardExceptionHandler {
                         request,
                         nested
                 ));
+    }
+
+    @ExceptionHandler(InvalidSesCode.class)
+    public ResponseEntity<ErrorMessageDto> handleInvalidSesCode(InvalidSesCode e, WebRequest request) {
+        log.warn("Invalid SES code provided: {}", e.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(buildError(e.getMessage(), HttpStatus.BAD_REQUEST, request));
     }
 
 }

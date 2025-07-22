@@ -1,4 +1,9 @@
 spring:
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
   application:
     name: Deal
   datasource:
@@ -17,6 +22,17 @@ spring:
   liquibase:
     enabled: true
     change-log: classpath:db/changelog/master.yml
+
+kafka:
+  init:
+    topics: true
+  topics:
+    finishRegistration: finish-registration
+    createDocuments: create-documents
+    sendDocuments: send-documents
+    sendSes: send-ses
+    creditIssued: credit-issued
+    statementDenied: statement-denied
 
 server:
   port: ${SERVER_PORT:8081}
