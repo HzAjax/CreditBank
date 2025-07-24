@@ -28,15 +28,22 @@ public class DocumentGenerator {
 
         Context context = new Context();
         context.setVariables(Map.of("message", emailMessage));
-        String content = engine.process("credit-document", context);
+
+        final String content;
+        try {
+            content = engine.process("credit-document", context);
+        } catch (Exception e) {
+            log.error("Error processing Thymeleaf template", e);
+            throw new DocumentGenerationException("Failed to process HTML template", e);
+        }
 
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             writePdf(outputStream, content);
             log.info("Document generation completed successfully for EmailMessageWithCreditDto: {}", emailMessage);
-            return new ByteArrayDataSource(outputStream.toByteArray(), "application/pdf");
+            return createDataSource(outputStream.toByteArray());
         } catch (IOException e) {
             log.error("Error writing PDF for EmailMessageWithCreditDto: {}", emailMessage, e);
-            throw new DocumentGenerationException("Failed to generate PDF document.");
+            throw new DocumentGenerationException("Failed to generate PDF document.", e);
         }
     }
 
@@ -50,7 +57,11 @@ public class DocumentGenerator {
             log.debug("PDF conversion completed successfully.");
         } catch (Exception e) {
             log.error("Error occurred during HTML to PDF conversion.", e);
-            throw new DocumentGenerationException("Error occurred while converting HTML to PDF.");
+            throw new DocumentGenerationException("Error occurred while converting HTML to PDF.", e);
         }
+    }
+
+    protected ByteArrayDataSource createDataSource(byte[] data) throws IOException {
+        return new ByteArrayDataSource(data, "application/pdf");
     }
 }

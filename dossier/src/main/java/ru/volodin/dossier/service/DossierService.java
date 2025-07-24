@@ -87,7 +87,7 @@ public class DossierService {
 
             sender.send(mimeMessage);
             log.info("Email with SES code sent to {}", emailMessage.getAddress());
-        } catch (MessagingException e) {
+        } catch (Exception  e) {
             log.error("Failed to send SES code email", e);
             throw new RuntimeException("Ошибка при отправке email", e);
         }
@@ -106,7 +106,7 @@ public class DossierService {
     }
 
     private String generateSendDocumentEmail(UUID statementId) {
-        try (InputStream stream = getClass().getClassLoader().getResourceAsStream("templates/documentSend.html")) {
+        try (InputStream stream = getClassLoaderStream("templates/documentSend.html")) {
             if (stream == null) throw new RuntimeException("Template not found: documentSend.html");
             String template = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
             return template.formatted(String.format(sendDocumentUrlTemplate, statementId));
@@ -117,7 +117,7 @@ public class DossierService {
     }
 
     private String generateSignDocumentEmail(UUID statementId) {
-        try (InputStream stream = getClass().getClassLoader().getResourceAsStream("templates/documentSign.html")) {
+        try (InputStream stream = getClassLoaderStream("templates/documentSign.html")) {
             if (stream == null) throw new RuntimeException("Template not found: documentSign.html");
             String template = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
             return template.formatted(String.format(signDocumentUrlTemplate, statementId));
@@ -128,7 +128,7 @@ public class DossierService {
     }
 
     private String generateCodeDocumentEmail(UUID statementId, UUID sesCode) {
-        try (InputStream stream = getClass().getClassLoader().getResourceAsStream("templates/documentCode.html")) {
+        try (InputStream stream = getClassLoaderStream("templates/documentCode.html")) {
             if (stream == null) throw new RuntimeException("Template not found: documentCode.html");
             String template = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
             return template
@@ -138,6 +138,10 @@ public class DossierService {
             log.error("Error reading or processing HTML template", e);
             throw new RuntimeException("Ошибка при генерации содержимого email", e);
         }
+    }
+
+    protected InputStream getClassLoaderStream(String path) {
+        return getClass().getClassLoader().getResourceAsStream(path);
     }
 }
 

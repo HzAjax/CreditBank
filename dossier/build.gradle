@@ -16,6 +16,7 @@ ext.versions = [
 		springDoc  : '2.8.8',
 		lombok     : '1.18.30',
 		junit      : '1.10.0',
+		mockito    : '5.11.0',
 		lombokMapstructBindingVersion : '0.2.0',
 		mapstructVersion : '1.5.5.Final',
 		springBootConfigProcessorVersion : '3.5.2'
@@ -41,6 +42,11 @@ dependencies {
 
 	implementation 'com.itextpdf:html2pdf:3.0.3'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+	testImplementation "org.springframework.boot:spring-boot-starter-test"
+	testRuntimeOnly "org.junit.platform:junit-platform-launcher:${versions.junit}"
+	testImplementation "org.mockito:mockito-junit-jupiter:${versions.mockito}"
+	testImplementation 'org.mockito:mockito-inline:5.2.0'
 }
 
 springBoot {
