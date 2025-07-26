@@ -25,8 +25,6 @@ spring:
           ru.volodin.deal.entity.dto.api.CreditDto:ru.volodin.dossier.kafka.dto.CreditDto,
           ru.volodin.deal.entity.dto.api.PaymentScheduleElementDto:ru.volodin.dossier.kafka.dto.PaymentScheduleElementDto
 kafka:
-  init:
-    topics: true
   topics:
     finishRegistration: finish-registration
     createDocuments: create-documents

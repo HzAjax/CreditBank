@@ -24,8 +24,6 @@ spring:
     change-log: classpath:db/changelog/master.yml
 
 kafka:
-  init:
-    topics: true
   topics:
     finishRegistration: finish-registration
     createDocuments: create-documents
