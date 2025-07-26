@@ -6,8 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import ru.volodin.dossier.kafka.dto.EmailMessage;
-import ru.volodin.dossier.kafka.dto.EmailMessageWithCreditDto;
-import ru.volodin.dossier.kafka.dto.EmailMessageWithSesCode;
+import ru.volodin.dossier.kafka.dto.EmailMessageCreditDto;
+import ru.volodin.dossier.kafka.dto.EmailMessageSesCode;
 import ru.volodin.dossier.service.DossierService;
 
 @Slf4j
@@ -29,15 +29,15 @@ public class DossierListener {
     }
 
     @KafkaListener(groupId = "${spring.kafka.consumer.group-id}", topics = "${kafka.topics.sendDocuments}")
-    public void handleSendDocuments(EmailMessageWithCreditDto emailMessage) throws MessagingException {
+    public void handleSendDocuments(EmailMessageCreditDto emailMessage) throws MessagingException {
         log.info("Received message from topic sendDocuments: {}", emailMessage);
         dossierService.sendMessageEmail(emailMessage);
     }
 
     @KafkaListener(groupId = "${spring.kafka.consumer.group-id}", topics = "${kafka.topics.sendSes}")
-    public void handleSendSesCode(EmailMessageWithSesCode emailMessageWithSesCode) {
-        log.info("Received message from topic sendSes: {}", emailMessageWithSesCode);
-        dossierService.sendMessageEmail(emailMessageWithSesCode);
+    public void handleSendSesCode(EmailMessageSesCode emailMessageSesCode) {
+        log.info("Received message from topic sendSes: {}", emailMessageSesCode);
+        dossierService.sendMessageEmail(emailMessageSesCode);
     }
 
     @KafkaListener(groupId = "${spring.kafka.consumer.group-id}", topics = "${kafka.topics.creditIssued}")

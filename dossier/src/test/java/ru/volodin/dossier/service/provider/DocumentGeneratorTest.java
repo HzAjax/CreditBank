@@ -6,7 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 import ru.volodin.dossier.exceptions.DocumentGenerationException;
-import ru.volodin.dossier.kafka.dto.EmailMessageWithCreditDto;
+import ru.volodin.dossier.kafka.dto.EmailMessageCreditDto;
 
 import java.io.IOException;
 
@@ -32,7 +32,7 @@ class DocumentGeneratorTest {
 
     @Test
     void testGenerateDocument_success() throws IOException {
-        EmailMessageWithCreditDto dto = new EmailMessageWithCreditDto();
+        EmailMessageCreditDto dto = new EmailMessageCreditDto();
         when(engine.process(eq("credit-document"), any())).thenReturn("<html><body><p>Hello</p></body></html>");
 
         DataSource result = generator.generateDocument(dto);
@@ -44,7 +44,7 @@ class DocumentGeneratorTest {
 
     @Test
     void testGenerateDocument_invalidHtml_throwsDocumentGenerationException() {
-        EmailMessageWithCreditDto dto = new EmailMessageWithCreditDto();
+        EmailMessageCreditDto dto = new EmailMessageCreditDto();
         when(engine.process(eq("credit-document"), any())).thenReturn("<html><invalid></body>");
 
         DocumentGenerationException ex = assertThrows(DocumentGenerationException.class,
@@ -56,7 +56,7 @@ class DocumentGeneratorTest {
 
     @Test
     void testGenerateDocument_engineThrowsException_wrappedInDocumentGenerationException() {
-        EmailMessageWithCreditDto dto = new EmailMessageWithCreditDto();
+        EmailMessageCreditDto dto = new EmailMessageCreditDto();
         when(engine.process(eq("credit-document"), any()))
                 .thenThrow(new RuntimeException("Thymeleaf error"));
 
@@ -70,7 +70,7 @@ class DocumentGeneratorTest {
 
     @Test
     void testGenerateDocument_dataSourceCreationThrowsIOException() throws IOException {
-        EmailMessageWithCreditDto dto = new EmailMessageWithCreditDto();
+        EmailMessageCreditDto dto = new EmailMessageCreditDto();
 
         SpringTemplateEngine engine = mock(SpringTemplateEngine.class);
         when(engine.process(eq("credit-document"), any())).thenReturn("<html><body><p>Hello</p></body></html>");

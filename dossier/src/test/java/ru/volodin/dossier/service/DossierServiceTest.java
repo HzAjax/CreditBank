@@ -15,8 +15,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.util.ReflectionTestUtils;
 import ru.volodin.dossier.kafka.dto.EmailMessage;
-import ru.volodin.dossier.kafka.dto.EmailMessageWithCreditDto;
-import ru.volodin.dossier.kafka.dto.EmailMessageWithSesCode;
+import ru.volodin.dossier.kafka.dto.EmailMessageCreditDto;
+import ru.volodin.dossier.kafka.dto.EmailMessageSesCode;
 import ru.volodin.dossier.kafka.dto.enums.Theme;
 import ru.volodin.dossier.service.provider.DocumentGenerator;
 
@@ -68,7 +68,7 @@ class DossierServiceTest {
 
     @Test
     void testSendEmailWithCredit_success() throws Exception {
-        EmailMessageWithCreditDto msg = new EmailMessageWithCreditDto();
+        EmailMessageCreditDto msg = new EmailMessageCreditDto();
         msg.setAddress("test@example.com");
         msg.setStatementId(UUID.randomUUID());
 
@@ -81,7 +81,7 @@ class DossierServiceTest {
 
     @Test
     void testSendEmailWithCredit_documentGenerationFails_throwsMessagingException() throws Exception {
-        EmailMessageWithCreditDto msg = new EmailMessageWithCreditDto();
+        EmailMessageCreditDto msg = new EmailMessageCreditDto();
         msg.setAddress("test@example.com");
         msg.setStatementId(UUID.randomUUID());
 
@@ -95,7 +95,7 @@ class DossierServiceTest {
 
     @Test
     void testSendEmailWithSesCode_success() {
-        EmailMessageWithSesCode msg = new EmailMessageWithSesCode();
+        EmailMessageSesCode msg = new EmailMessageSesCode();
         msg.setAddress("test@example.com");
         msg.setStatementId(UUID.randomUUID());
         msg.setSesCodeConfirm(UUID.randomUUID());
@@ -106,7 +106,7 @@ class DossierServiceTest {
 
     @Test
     void testSendEmailWithSesCode_exceptionThrown_runtimeException() {
-        EmailMessageWithSesCode msg = new EmailMessageWithSesCode();
+        EmailMessageSesCode msg = new EmailMessageSesCode();
         msg.setAddress("fail@example.com");
         msg.setStatementId(UUID.randomUUID());
         msg.setSesCodeConfirm(UUID.randomUUID());

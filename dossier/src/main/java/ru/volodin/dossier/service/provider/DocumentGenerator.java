@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 import ru.volodin.dossier.exceptions.DocumentGenerationException;
-import ru.volodin.dossier.kafka.dto.EmailMessageWithCreditDto;
+import ru.volodin.dossier.kafka.dto.EmailMessageCreditDto;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -23,7 +23,7 @@ import java.util.Map;
 public class DocumentGenerator {
     private final SpringTemplateEngine engine;
 
-    public DataSource generateDocument(EmailMessageWithCreditDto emailMessage) {
+    public DataSource generateDocument(EmailMessageCreditDto emailMessage) {
         log.info("Starting document generation for EmailMessageWithCreditDto: {}", emailMessage);
 
         Context context = new Context();

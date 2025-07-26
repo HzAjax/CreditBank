@@ -10,8 +10,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import ru.volodin.dossier.kafka.dto.EmailMessage;
-import ru.volodin.dossier.kafka.dto.EmailMessageWithCreditDto;
-import ru.volodin.dossier.kafka.dto.EmailMessageWithSesCode;
+import ru.volodin.dossier.kafka.dto.EmailMessageCreditDto;
+import ru.volodin.dossier.kafka.dto.EmailMessageSesCode;
 import ru.volodin.dossier.service.provider.DocumentGenerator;
 
 import java.io.IOException;
@@ -50,7 +50,7 @@ public class DossierService {
         log.info("Email sent successfully to address: {}", emailMessage.getAddress());
     }
 
-    public void sendMessageEmail(EmailMessageWithCreditDto emailMessage) throws MessagingException {
+    public void sendMessageEmail(EmailMessageCreditDto emailMessage) throws MessagingException {
         log.info("Preparing to send email with credit documents for EmailMessageWithCreditDto: {}", emailMessage);
 
         DataSource dataSource;
@@ -73,7 +73,7 @@ public class DossierService {
         log.info("Email with credit documents sent to {}", emailMessage.getAddress());
     }
 
-    public void sendMessageEmail(EmailMessageWithSesCode emailMessage) {
+    public void sendMessageEmail(EmailMessageSesCode emailMessage) {
         log.info("Preparing to send email with SES code for EmailMessageWithSesCode: {}", emailMessage);
         try {
             MimeMessage mimeMessage = sender.createMimeMessage();

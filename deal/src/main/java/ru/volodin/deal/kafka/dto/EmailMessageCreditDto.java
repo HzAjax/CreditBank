@@ -1,11 +1,12 @@
-package ru.volodin.dossier.kafka.dto;
+package ru.volodin.deal.kafka.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ru.volodin.dossier.kafka.dto.enums.Theme;
+import ru.volodin.deal.entity.dto.api.CreditDto;
+import ru.volodin.deal.kafka.dto.enums.Theme;
 
 import java.util.UUID;
 
@@ -14,7 +15,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class EmailMessageWithCreditDto {
+public class EmailMessageCreditDto {
     private String address;
     private Theme theme;
     private UUID statementId;

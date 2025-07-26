@@ -14,7 +14,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class EmailMessageWithSesCode {
+public class EmailMessageSesCode {
     private String address;
     private Theme theme;
     private UUID statementId;

@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 import ru.volodin.deal.configuration.props.KafkaTopicsProperties;
 import ru.volodin.deal.entity.dto.api.CreditDto;
 import ru.volodin.deal.kafka.dto.EmailMessage;
-import ru.volodin.deal.kafka.dto.EmailMessageWithCreditDto;
-import ru.volodin.deal.kafka.dto.EmailMessageWithSesCode;
+import ru.volodin.deal.kafka.dto.EmailMessageCreditDto;
+import ru.volodin.deal.kafka.dto.EmailMessageSesCode;
 import ru.volodin.deal.kafka.dto.enums.Theme;
 
 import java.util.UUID;
@@ -36,16 +36,16 @@ public class DealProducer {
     }
 
     public void sendPrepareDocumentsNotification(String email, Theme theme, UUID statementId, CreditDto creditDto) {
-        Message<EmailMessageWithCreditDto> message = MessageBuilder
-                .withPayload(new EmailMessageWithCreditDto(email, theme, statementId, creditDto))
+        Message<EmailMessageCreditDto> message = MessageBuilder
+                .withPayload(new EmailMessageCreditDto(email, theme, statementId, creditDto))
                 .setHeader(KafkaHeaders.TOPIC, kafkaTopics.getSendDocuments())
                 .build();
         kafkaTemplate.send(message);
     }
 
     public void sendSignCodeDocumentsNotification(String email, Theme theme, UUID statementId, UUID sesCode) {
-        Message<EmailMessageWithSesCode> message = MessageBuilder
-                .withPayload(new EmailMessageWithSesCode(email, theme, statementId, sesCode))
+        Message<EmailMessageSesCode> message = MessageBuilder
+                .withPayload(new EmailMessageSesCode(email, theme, statementId, sesCode))
                 .setHeader(KafkaHeaders.TOPIC, kafkaTopics.getSendSes())
                 .build();
         kafkaTemplate.send(message);
