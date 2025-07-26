@@ -23,16 +23,12 @@ public class DealProducer {
     private final KafkaTemplate<String, EmailMessage> kafkaTemplate;
     private final KafkaTopicsProperties kafkaTopics;
 
-    public void sendFinishRegistrationRequestNotification(String email, Theme theme, UUID statementId) {
-        sendNotification(email, kafkaTopics.getFinishRegistration(), theme, statementId);
-    }
-
-    private void sendNotification(String email, String topic, Theme theme, UUID statementId) {
+    public void sendFinishRegistrationRequestNotification(String email, UUID statementId) {
         Message<EmailMessage> message = MessageBuilder
-                .withPayload(new EmailMessage(email, theme, statementId))
-                .setHeader(KafkaHeaders.TOPIC, topic)
+                .withPayload(new EmailMessage(email, Theme.FINISH_REGISTRATION, statementId))
+                .setHeader(KafkaHeaders.TOPIC, kafkaTopics.getFinishRegistration())
                 .build();
-        kafkaTemplate.send(message);
+        sendAndWait(message);
     }
 
     public void sendPrepareDocumentsNotification(String email, Theme theme, UUID statementId, CreditDto creditDto) {
@@ -40,7 +36,7 @@ public class DealProducer {
                 .withPayload(new EmailMessageCreditDto(email, theme, statementId, creditDto))
                 .setHeader(KafkaHeaders.TOPIC, kafkaTopics.getSendDocuments())
                 .build();
-        kafkaTemplate.send(message);
+        sendAsync(message);
     }
 
     public void sendSignCodeDocumentsNotification(String email, Theme theme, UUID statementId, UUID sesCode) {
@@ -48,20 +44,43 @@ public class DealProducer {
                 .withPayload(new EmailMessageSesCode(email, theme, statementId, sesCode))
                 .setHeader(KafkaHeaders.TOPIC, kafkaTopics.getSendSes())
                 .build();
-        kafkaTemplate.send(message);
+        sendAsync(message);
     }
-
 
     public void sendSuccessSignDocumentsNotification(String email, Theme theme, UUID statementId) {
-        sendNotification(email, kafkaTopics.getCreditIssued(), theme, statementId);
+        Message<EmailMessage> message = MessageBuilder
+                .withPayload(new EmailMessage(email, theme, statementId))
+                .setHeader(KafkaHeaders.TOPIC, kafkaTopics.getCreditIssued())
+                .build();
+        sendAsync(message);
     }
-
-    public void sendScoringException(String email, Theme theme, UUID statementId) {
-        sendNotification(email, kafkaTopics.getStatementDenied(), theme, statementId);
-    }
-
 
     public void sendCreateDocumentsNotification(String email, Theme theme, UUID statementId) {
-        sendNotification(email, kafkaTopics.getCreateDocuments(), theme, statementId);
+        Message<EmailMessage> message = MessageBuilder
+                .withPayload(new EmailMessage(email, theme, statementId))
+                .setHeader(KafkaHeaders.TOPIC, kafkaTopics.getCreateDocuments())
+                .build();
+        sendAsync(message);
+    }
+
+    private void sendAndWait(Message<?> message) {
+        try {
+            kafkaTemplate.send(message).get();
+            log.debug("Kafka message sent: {}", message);
+        } catch (Exception e) {
+            log.error("Kafka send failed: {}", message, e);
+            throw new RuntimeException("Ошибка при отправке Kafka-сообщения", e);
+        }
+    }
+
+    private void sendAsync(Message<?> message) {
+        kafkaTemplate.send(message)
+                .whenComplete((result, ex) -> {
+                    if (ex != null) {
+                        log.error("Kafka send failed async: {}", message, ex);
+                    } else {
+                        log.debug("Kafka message sent: {}", message);
+                    }
+                });
     }
 }

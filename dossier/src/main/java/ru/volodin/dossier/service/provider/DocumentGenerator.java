@@ -22,6 +22,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class DocumentGenerator {
     private final SpringTemplateEngine engine;
+    private static final String CREDIT_DOCUMENT_TEMPLATE = "credit-document";
 
     public DataSource generateDocument(EmailMessageCreditDto emailMessage) {
         log.info("Starting document generation for EmailMessageWithCreditDto: {}", emailMessage);
@@ -31,7 +32,7 @@ public class DocumentGenerator {
 
         final String content;
         try {
-            content = engine.process("credit-document", context);
+            content = engine.process(CREDIT_DOCUMENT_TEMPLATE, context);
         } catch (Exception e) {
             log.error("Error processing Thymeleaf template", e);
             throw new DocumentGenerationException("Failed to process HTML template", e);

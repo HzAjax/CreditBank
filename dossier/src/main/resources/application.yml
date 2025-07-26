@@ -18,10 +18,10 @@ spring:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
-        spring.json.trusted.packages: '*'
+        spring.json.trusted.packages: ru.volodin.dossier.kafka.dto
         spring.json.type.mapping: ru.volodin.deal.kafka.dto.EmailMessage:ru.volodin.dossier.kafka.dto.EmailMessage,
-          ru.volodin.deal.kafka.dto.EmailMessageWithSesCode:ru.volodin.dossier.kafka.dto.EmailMessageWithSesCode,
-          ru.volodin.deal.kafka.dto.EmailMessageWithCreditDto:ru.volodin.dossier.kafka.dto.EmailMessageWithCreditDto,
+          ru.volodin.deal.kafka.dto.EmailMessageSesCode:ru.volodin.dossier.kafka.dto.EmailMessageSesCode,
+          ru.volodin.deal.kafka.dto.EmailMessageCreditDto:ru.volodin.dossier.kafka.dto.EmailMessageCreditDto,
           ru.volodin.deal.entity.dto.api.CreditDto:ru.volodin.dossier.kafka.dto.CreditDto,
           ru.volodin.deal.entity.dto.api.PaymentScheduleElementDto:ru.volodin.dossier.kafka.dto.PaymentScheduleElementDto
 kafka:

@@ -97,8 +97,7 @@ public class DealService {
         updateStatus(statementId, ApplicationStatus.APPROVED, ChangeType.AUTOMATIC);
         statementRepository.save(statement);
 
-        dealProducer.sendFinishRegistrationRequestNotification(statement.getClient().getEmail(),
-                Theme.FINISH_REGISTRATION, statement.getStatementId());
+        dealProducer.sendFinishRegistrationRequestNotification(statement.getClient().getEmail(), statement.getStatementId());
 
         log.debug("Loan offer selected and statement ID {} updated to status APPROVED.", statementId);
     }
@@ -174,6 +173,7 @@ public class DealService {
         statementRepository.save(statement);
     }
 
+    @Transactional
     public void prepareDocuments(UUID statementId) {
         StatementEntity statement = getStatementById(statementId);
 

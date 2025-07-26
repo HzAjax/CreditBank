@@ -6,25 +6,31 @@ import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring6.SpringTemplateEngine;
 import ru.volodin.dossier.kafka.dto.EmailMessage;
 import ru.volodin.dossier.kafka.dto.EmailMessageCreditDto;
 import ru.volodin.dossier.kafka.dto.EmailMessageSesCode;
+import ru.volodin.dossier.kafka.dto.enums.Theme;
 import ru.volodin.dossier.service.provider.DocumentGenerator;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.UUID;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class DossierService {
+
     private final JavaMailSender sender;
     private final DocumentGenerator documentGenerator;
+    private final SpringTemplateEngine templateEngine;
 
     @Value("${client.deal.send}")
     private String sendDocumentUrlTemplate;
@@ -43,7 +49,7 @@ public class DossierService {
         helper.setTo(emailMessage.getAddress());
         helper.setSubject("Кредитные уведомления");
 
-        String text = getEmailText(emailMessage);
+        String text = getEmailHtml(emailMessage);
         helper.setText(text, true);
 
         sender.send(message);
@@ -93,55 +99,64 @@ public class DossierService {
         }
     }
 
-    private String getEmailText(EmailMessage emailMessage) {
-        return switch (emailMessage.getTheme()) {
-            case FINISH_REGISTRATION -> "Завершите регистрацию для получения кредита";
-            case CC_DENIED -> "В кредите отказано";
-            case CC_APPROVED -> "Кредит одобрен";
-            case CREATED_DOCUMENTS -> generateSendDocumentEmail(emailMessage.getStatementId());
-            case PREPARE_DOCUMENTS -> "Документы формируются";
-            case SIGN_DOCUMENTS -> "Поздравляем! Документы подписаны, можете пользоваться кредитом";
-            default -> "Уведомление о кредите";
+    private String getEmailHtml(EmailMessage emailMessage) {
+
+        if (emailMessage.getTheme() == null) {
+            throw new IllegalStateException("NULL THEME! Full message: " + emailMessage);
+        }
+
+        if (emailMessage.getTheme() == Theme.CREATED_DOCUMENTS) {
+            return generateSendDocumentEmail(emailMessage.getStatementId());
+        }
+
+        Context context = new Context();
+        context.setVariable("message", emailMessage);
+
+        String template = switch (emailMessage.getTheme()) {
+            case FINISH_REGISTRATION -> "finishRegistration";
+            case CC_DENIED -> "ccDenied";
+            case CC_APPROVED -> "ccApproved";
+            case PREPARE_DOCUMENTS -> "prepareDocuments";
+            case SIGN_DOCUMENTS -> "signDocuments";
+            default -> "defaultNotification";
         };
+
+        return templateEngine.process(template, context);
     }
 
     private String generateSendDocumentEmail(UUID statementId) {
-        try (InputStream stream = getClassLoaderStream("templates/documentSend.html")) {
-            if (stream == null) throw new RuntimeException("Template not found: documentSend.html");
-            String template = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
+        try {
+            var resource = new ClassPathResource("templates/documentSend.html");
+            String template = Files.readString(resource.getFile().toPath(), StandardCharsets.UTF_8);
             return template.formatted(String.format(sendDocumentUrlTemplate, statementId));
-        } catch (IOException e) {
-            log.error("Error reading or processing HTML template", e);
-            throw new RuntimeException("Ошибка при чтении HTML-шаблона", e);
+        } catch (IOException | RuntimeException  e) {
+            log.error("Error reading documentSend.html", e);
+            throw new RuntimeException("Ошибка при чтении шаблона send", e);
         }
     }
 
     private String generateSignDocumentEmail(UUID statementId) {
-        try (InputStream stream = getClassLoaderStream("templates/documentSign.html")) {
-            if (stream == null) throw new RuntimeException("Template not found: documentSign.html");
-            String template = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
+        try {
+            var resource = new ClassPathResource("templates/documentSign.html");
+            String template = Files.readString(resource.getFile().toPath(), StandardCharsets.UTF_8);
             return template.formatted(String.format(signDocumentUrlTemplate, statementId));
-        } catch (IOException e) {
-            log.error("Error reading or processing HTML template", e);
-            throw new RuntimeException("Ошибка при чтении HTML-шаблона", e);
+        } catch (IOException | RuntimeException  e) {
+            log.error("Error reading documentSign.html", e);
+            throw new RuntimeException("Ошибка при чтении шаблона sign", e);
         }
     }
 
     private String generateCodeDocumentEmail(UUID statementId, UUID sesCode) {
-        try (InputStream stream = getClassLoaderStream("templates/documentCode.html")) {
-            if (stream == null) throw new RuntimeException("Template not found: documentCode.html");
-            String template = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
+        try {
+            var resource = new ClassPathResource("templates/documentCode.html");
+            String template = Files.readString(resource.getFile().toPath(), StandardCharsets.UTF_8);
             return template
                     .replace("%s", String.format(codeDocumentUrlTemplate, statementId))
                     .replace("SesCode", sesCode.toString());
-        } catch (IOException e) {
-            log.error("Error reading or processing HTML template", e);
-            throw new RuntimeException("Ошибка при генерации содержимого email", e);
+        } catch (IOException | RuntimeException  e) {
+            log.error("Error reading documentCode.html", e);
+            throw new RuntimeException("Ошибка при генерации шаблона code", e);
         }
-    }
-
-    protected InputStream getClassLoaderStream(String path) {
-        return getClass().getClassLoader().getResourceAsStream(path);
     }
 }
 
