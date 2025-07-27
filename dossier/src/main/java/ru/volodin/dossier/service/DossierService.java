@@ -146,13 +146,13 @@ public class DossierService {
         }
     }
 
-    private String generateCodeDocumentEmail(UUID statementId, UUID sesCode) {
+    private String generateCodeDocumentEmail(UUID statementId, String sesCode) {
         try {
             var resource = new ClassPathResource("templates/documentCode.html");
             String template = Files.readString(resource.getFile().toPath(), StandardCharsets.UTF_8);
             return template
                     .replace("%s", String.format(codeDocumentUrlTemplate, statementId))
-                    .replace("SesCode", sesCode.toString());
+                    .replace("SesCode", sesCode);
         } catch (IOException | RuntimeException  e) {
             log.error("Error reading documentCode.html", e);
             throw new RuntimeException("Ошибка при генерации шаблона code", e);

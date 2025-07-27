@@ -18,5 +18,5 @@ public class EmailMessageSesCode {
     private String address;
     private Theme theme;
     private UUID statementId;
-    private UUID sesCodeConfirm;
+    private String sesCodeConfirm;
 }

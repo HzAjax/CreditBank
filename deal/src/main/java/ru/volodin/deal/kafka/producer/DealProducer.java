@@ -31,25 +31,25 @@ public class DealProducer {
         sendAndWait(message);
     }
 
-    public void sendPrepareDocumentsNotification(String email, Theme theme, UUID statementId, CreditDto creditDto) {
+    public void sendPrepareDocumentsNotification(String email, UUID statementId, CreditDto creditDto) {
         Message<EmailMessageCreditDto> message = MessageBuilder
-                .withPayload(new EmailMessageCreditDto(email, theme, statementId, creditDto))
+                .withPayload(new EmailMessageCreditDto(email, Theme.PREPARE_DOCUMENTS, statementId, creditDto))
                 .setHeader(KafkaHeaders.TOPIC, kafkaTopics.getSendDocuments())
                 .build();
         sendAsync(message);
     }
 
-    public void sendSignCodeDocumentsNotification(String email, Theme theme, UUID statementId, UUID sesCode) {
+    public void sendSignCodeDocumentsNotification(String email, UUID statementId, String sesCode) {
         Message<EmailMessageSesCode> message = MessageBuilder
-                .withPayload(new EmailMessageSesCode(email, theme, statementId, sesCode))
+                .withPayload(new EmailMessageSesCode(email, Theme.SIGN_DOCUMENTS, statementId, sesCode))
                 .setHeader(KafkaHeaders.TOPIC, kafkaTopics.getSendSes())
                 .build();
         sendAsync(message);
     }
 
-    public void sendSuccessSignDocumentsNotification(String email, Theme theme, UUID statementId) {
+    public void sendSuccessSignDocumentsNotification(String email, UUID statementId) {
         Message<EmailMessage> message = MessageBuilder
-                .withPayload(new EmailMessage(email, theme, statementId))
+                .withPayload(new EmailMessage(email, Theme.SIGN_DOCUMENTS, statementId))
                 .setHeader(KafkaHeaders.TOPIC, kafkaTopics.getCreditIssued())
                 .build();
         sendAsync(message);
@@ -74,13 +74,17 @@ public class DealProducer {
     }
 
     private void sendAsync(Message<?> message) {
-        kafkaTemplate.send(message)
-                .whenComplete((result, ex) -> {
-                    if (ex != null) {
-                        log.error("Kafka send failed async: {}", message, ex);
-                    } else {
-                        log.debug("Kafka message sent: {}", message);
-                    }
-                });
+        try {
+            kafkaTemplate.send(message)
+                    .whenComplete((result, ex) -> {
+                        if (ex != null) {
+                            log.error("Kafka send failed async (callback): {}", message, ex);
+                        } else {
+                            log.debug("Kafka message sent: {}", message);
+                        }
+                    });
+        } catch (Exception ex) {
+            log.error("Kafka send failed async (immediate): {}", message, ex);
+        }
     }
 }

@@ -107,7 +107,7 @@ class DossierServiceTest {
         EmailMessageSesCode msg = new EmailMessageSesCode();
         msg.setAddress("test@example.com");
         msg.setStatementId(UUID.randomUUID());
-        msg.setSesCodeConfirm(UUID.randomUUID());
+        msg.setSesCodeConfirm(UUID.randomUUID().toString().replace("-", "").substring(0, 6));
 
         assertDoesNotThrow(() -> dossierService.sendMessageEmail(msg));
         verify(mailSender).send(any(MimeMessage.class));
@@ -118,7 +118,7 @@ class DossierServiceTest {
         EmailMessageSesCode msg = new EmailMessageSesCode();
         msg.setAddress("fail@example.com");
         msg.setStatementId(UUID.randomUUID());
-        msg.setSesCodeConfirm(UUID.randomUUID());
+        msg.setSesCodeConfirm(UUID.randomUUID().toString().replace("-", "").substring(0, 6));
 
         when(mailSender.createMimeMessage()).thenThrow(new RuntimeException("Boom"));
 
@@ -207,7 +207,7 @@ class DossierServiceTest {
         Files.write(path, new byte[]{ (byte) 0xC3, (byte) 0x28 }); // invalid UTF-8
 
         UUID statementId = UUID.randomUUID();
-        UUID sesCode = UUID.randomUUID();
+        String sesCode = UUID.randomUUID().toString().replace("-", "").substring(0, 6);
 
         RuntimeException ex = assertThrows(RuntimeException.class, () ->
                 ReflectionTestUtils.invokeMethod(dossierService, "generateCodeDocumentEmail", statementId, sesCode)

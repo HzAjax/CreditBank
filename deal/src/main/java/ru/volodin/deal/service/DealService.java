@@ -186,18 +186,16 @@ public class DealService {
 
         CreditDto creditDto = creditMapper.toCreditDto(statement.getCredit());
 
-        dealProducer.sendPrepareDocumentsNotification(statement.getClient().getEmail(),
-                Theme.PREPARE_DOCUMENTS, statementId, creditDto);
+        dealProducer.sendPrepareDocumentsNotification(statement.getClient().getEmail(), statementId, creditDto);
     }
 
     public void createSignCodeDocuments(UUID statementId) {
         StatementEntity statement = getStatementById(statementId);
-        UUID sesCode = UUID.randomUUID();
+        String sesCode = UUID.randomUUID().toString().replace("-", "").substring(0, 6);
         statement.setCode(sesCode.toString());
         statementRepository.save(statement);
 
-        dealProducer.sendSignCodeDocumentsNotification(statement.getClient().getEmail(),
-                Theme.SIGN_DOCUMENTS, statementId, sesCode);
+        dealProducer.sendSignCodeDocumentsNotification(statement.getClient().getEmail(), statementId, sesCode);
 
         log.debug("Creating sesCode {}, for documents of statement ID {}.", sesCode, statement.getStatementId());
     }
@@ -213,8 +211,7 @@ public class DealService {
         updateStatus(statementId, ApplicationStatus.CREDIT_ISSUED, ChangeType.AUTOMATIC);
         statementRepository.save(statement);
 
-        dealProducer.sendSuccessSignDocumentsNotification(statement.getClient().getEmail(),
-                Theme.SIGN_DOCUMENTS, statementId);
+        dealProducer.sendSuccessSignDocumentsNotification(statement.getClient().getEmail(), statementId);
 
         log.info("Documents for statement ID {} have been signed and credit issued.", statement.getStatementId());
     }
