@@ -19,8 +19,8 @@ import ru.volodin.dossier.kafka.dto.enums.Theme;
 import ru.volodin.dossier.service.provider.DocumentGenerator;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.UUID;
 
 @Slf4j
@@ -127,9 +127,11 @@ public class DossierService {
     private String generateSendDocumentEmail(UUID statementId) {
         try {
             var resource = new ClassPathResource("templates/documentSend.html");
-            String template = Files.readString(resource.getFile().toPath(), StandardCharsets.UTF_8);
-            return template.formatted(String.format(sendDocumentUrlTemplate, statementId));
-        } catch (IOException | RuntimeException  e) {
+            try (InputStream inputStream = resource.getInputStream()) {
+                String template = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+                return template.formatted(String.format(sendDocumentUrlTemplate, statementId));
+            }
+        } catch (IOException | RuntimeException e) {
             log.error("Error reading documentSend.html", e);
             throw new RuntimeException("Ошибка при чтении шаблона send", e);
         }
@@ -138,9 +140,11 @@ public class DossierService {
     private String generateSignDocumentEmail(UUID statementId) {
         try {
             var resource = new ClassPathResource("templates/documentSign.html");
-            String template = Files.readString(resource.getFile().toPath(), StandardCharsets.UTF_8);
-            return template.formatted(String.format(signDocumentUrlTemplate, statementId));
-        } catch (IOException | RuntimeException  e) {
+            try (InputStream inputStream = resource.getInputStream()) {
+                String template = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+                return template.formatted(String.format(signDocumentUrlTemplate, statementId));
+            }
+        } catch (IOException | RuntimeException e) {
             log.error("Error reading documentSign.html", e);
             throw new RuntimeException("Ошибка при чтении шаблона sign", e);
         }
@@ -149,11 +153,13 @@ public class DossierService {
     private String generateCodeDocumentEmail(UUID statementId, String sesCode) {
         try {
             var resource = new ClassPathResource("templates/documentCode.html");
-            String template = Files.readString(resource.getFile().toPath(), StandardCharsets.UTF_8);
-            return template
-                    .replace("%s", String.format(codeDocumentUrlTemplate, statementId))
-                    .replace("SesCode", sesCode);
-        } catch (IOException | RuntimeException  e) {
+            try (InputStream inputStream = resource.getInputStream()) {
+                String template = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+                return template
+                        .replace("%s", String.format(codeDocumentUrlTemplate, statementId))
+                        .replace("SesCode", sesCode);
+            }
+        } catch (IOException | RuntimeException e) {
             log.error("Error reading documentCode.html", e);
             throw new RuntimeException("Ошибка при генерации шаблона code", e);
         }

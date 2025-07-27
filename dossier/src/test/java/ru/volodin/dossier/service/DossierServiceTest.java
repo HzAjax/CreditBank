@@ -10,7 +10,9 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedConstruction;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.thymeleaf.context.Context;
@@ -34,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -202,17 +205,20 @@ class DossierServiceTest {
     }
 
     @Test
-    void testGenerateCodeDocumentEmail_missingFile_throwsRuntimeException() throws IOException {
-        Path path = Path.of("build/resources/test/templates/documentCode.html");
-        Files.write(path, new byte[]{ (byte) 0xC3, (byte) 0x28 }); // invalid UTF-8
-
+    void testGenerateCodeDocumentEmail_missingFile_throwsRuntimeException() {
         UUID statementId = UUID.randomUUID();
-        String sesCode = UUID.randomUUID().toString().replace("-", "").substring(0, 6);
+        String sesCode = "ABC123";
 
-        RuntimeException ex = assertThrows(RuntimeException.class, () ->
-                ReflectionTestUtils.invokeMethod(dossierService, "generateCodeDocumentEmail", statementId, sesCode)
-        );
+        try (MockedConstruction<ClassPathResource> mocked = mockConstruction(ClassPathResource.class,
+                (mock, context) -> {
+                    when(mock.getInputStream()).thenThrow(new IOException("file not found"));
+                })) {
 
-        assertTrue(ex.getMessage().contains("Ошибка при генерации шаблона code"));
+            RuntimeException ex = assertThrows(RuntimeException.class, () ->
+                    ReflectionTestUtils.invokeMethod(dossierService, "generateCodeDocumentEmail", statementId, sesCode)
+            );
+
+            assertTrue(ex.getMessage().contains("Ошибка при генерации шаблона code"));
+        }
     }
 }

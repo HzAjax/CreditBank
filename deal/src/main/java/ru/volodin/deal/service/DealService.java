@@ -192,7 +192,7 @@ public class DealService {
     public void createSignCodeDocuments(UUID statementId) {
         StatementEntity statement = getStatementById(statementId);
         String sesCode = UUID.randomUUID().toString().replace("-", "").substring(0, 6);
-        statement.setCode(sesCode.toString());
+        statement.setCode(sesCode);
         statementRepository.save(statement);
 
         dealProducer.sendSignCodeDocumentsNotification(statement.getClient().getEmail(), statementId, sesCode);
