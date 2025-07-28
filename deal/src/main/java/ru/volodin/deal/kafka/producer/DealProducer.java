@@ -60,7 +60,9 @@ public class DealProducer {
                 .withPayload(new EmailMessage(email, theme, statementId))
                 .setHeader(KafkaHeaders.TOPIC, kafkaTopics.getCreateDocuments())
                 .build();
+        log.info("Before Kafka send");
         sendAsync(message);
+        log.info("After Kafka send");
     }
 
     private void sendAndWait(Message<?> message) {
