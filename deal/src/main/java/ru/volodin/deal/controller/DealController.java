@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.volodin.deal.entity.dto.api.FinishRegistrationRequestDto;
 import ru.volodin.deal.entity.dto.api.LoanOfferDto;
@@ -47,7 +48,6 @@ public class DealController {
             @ApiResponse(responseCode = "500", description = "Internal server error",
                     content = @Content( mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorMessageDto.class)))})
     public List<LoanOfferDto> calculateLoanOffers(@RequestBody @Valid LoanStatementRequestDto loanStatement) {
-
         return dealService.calculateLoanOffers(loanStatement);
     }
 
@@ -60,7 +60,6 @@ public class DealController {
             @ApiResponse(responseCode = "500", description = "Internal server error",
                     content = @Content( mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorMessageDto.class)))})
     public void selectLoanOffer(@RequestBody LoanOfferDto loanOffer) {
-
         dealService.selectLoanOffer(loanOffer);
     }
 
@@ -76,7 +75,47 @@ public class DealController {
                     content = @Content( mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorMessageDto.class)))})
     public void calculateCredit(@RequestBody FinishRegistrationRequestDto finishRegistration,
                                 @PathVariable @NotNull UUID statementId) {
-
         dealService.calculateCredit(statementId, finishRegistration);
+    }
+
+    @PostMapping("/document/{statementId}/send")
+    @Operation(summary = "Request to send documents")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Documents successfully sent"),
+            @ApiResponse(responseCode = "404", description = "Statement not found",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorMessageDto.class))),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorMessageDto.class)))
+    })
+    public void prepareDocuments(@PathVariable UUID statementId) {
+        dealService.prepareDocuments(statementId);
+    }
+
+    @PostMapping("/document/{statementId}/sign")
+    @Operation(summary = "Request to sign documents (generate SES code)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "SES code created and sent"),
+            @ApiResponse(responseCode = "404", description = "Statement not found",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorMessageDto.class))),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorMessageDto.class)))
+    })
+    public void createSignCodeDocuments(@PathVariable UUID statementId) {
+        dealService.createSignCodeDocuments(statementId);
+    }
+
+    @PostMapping("/document/{statementId}/code")
+    @Operation(summary = "Signing documents by SES code")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Documents signed successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid SES code",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorMessageDto.class))),
+            @ApiResponse(responseCode = "404", description = "Statement not found",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorMessageDto.class))),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorMessageDto.class)))
+    })
+    public void signCodeDocument(@PathVariable UUID statementId, @RequestParam String sesCode) {
+        dealService.signCodeDocument(statementId, sesCode);
     }
 }

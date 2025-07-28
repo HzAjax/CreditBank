@@ -19,6 +19,9 @@ import ru.volodin.deal.entity.dto.enums.ApplicationStatus;
 import ru.volodin.deal.entity.dto.enums.ChangeType;
 import ru.volodin.deal.entity.dto.enums.CreditStatus;
 import ru.volodin.deal.entity.jsonb.StatusHistory;
+import ru.volodin.deal.exceptions.InvalidSesCode;
+import ru.volodin.deal.kafka.dto.enums.Theme;
+import ru.volodin.deal.kafka.producer.DealProducer;
 import ru.volodin.deal.mappers.ClientMapper;
 import ru.volodin.deal.mappers.CreditMapper;
 import ru.volodin.deal.mappers.ScoringMapper;
@@ -39,6 +42,7 @@ public class DealService {
 
     private final ClientRepository clientRepository;
     private final StatementRepository statementRepository;
+    private final DealProducer dealProducer;
 
     private final ClientMapper clientMapper;
     private final ScoringMapper scoringMapper;
@@ -93,6 +97,8 @@ public class DealService {
         updateStatus(statementId, ApplicationStatus.APPROVED, ChangeType.AUTOMATIC);
         statementRepository.save(statement);
 
+        dealProducer.sendFinishRegistrationRequestNotification(statement.getClient().getEmail(), statement.getStatementId());
+
         log.debug("Loan offer selected and statement ID {} updated to status APPROVED.", statementId);
     }
 
@@ -139,6 +145,11 @@ public class DealService {
         clientMapper.updateClientFromScoringData(client, scoringDataDto);
         client.getEmployment().setEmploymentUUID(UUID.randomUUID());
         clientRepository.save(client);
+
+        dealProducer.sendCreateDocumentsNotification(statement.getClient().getEmail(),
+                Theme.CC_APPROVED, statement.getStatementId());
+        dealProducer.sendCreateDocumentsNotification(statement.getClient().getEmail(),
+                Theme.CREATED_DOCUMENTS, statement.getStatementId());
     }
 
     public StatementEntity getStatementById(UUID statementId) {
@@ -160,5 +171,48 @@ public class DealService {
         );
 
         statementRepository.save(statement);
+    }
+
+    @Transactional
+    public void prepareDocuments(UUID statementId) {
+        StatementEntity statement = getStatementById(statementId);
+
+        log.debug("Preparing documents for statement ID {}.", statement.getStatementId());
+
+        updateStatus(statementId, ApplicationStatus.PREPARE_DOCUMENTS, ChangeType.MANUAL);
+
+        log.debug("Updating status for statement ID {} to DOCUMENTS_CREATED.", statement.getStatementId());
+        updateStatus(statementId, ApplicationStatus.DOCUMENT_CREATED, ChangeType.AUTOMATIC);
+
+        CreditDto creditDto = creditMapper.toCreditDto(statement.getCredit());
+
+        dealProducer.sendPrepareDocumentsNotification(statement.getClient().getEmail(), statementId, creditDto);
+    }
+
+    public void createSignCodeDocuments(UUID statementId) {
+        StatementEntity statement = getStatementById(statementId);
+        String sesCode = UUID.randomUUID().toString().replace("-", "").substring(0, 6);
+        statement.setCode(sesCode);
+        statementRepository.save(statement);
+
+        dealProducer.sendSignCodeDocumentsNotification(statement.getClient().getEmail(), statementId, sesCode);
+
+        log.debug("Creating sesCode {}, for documents of statement ID {}.", sesCode, statement.getStatementId());
+    }
+
+    public void signCodeDocument(UUID statementId, String sesCode) {
+        StatementEntity statement = getStatementById(statementId);
+        if(!sesCode.equals(statement.getCode())) {
+            throw new InvalidSesCode("Invalid ses code="+sesCode);
+        }
+        statement.setSignDate(LocalDateTime.now());
+        updateStatus(statementId, ApplicationStatus.DOCUMENT_SIGNED, ChangeType.AUTOMATIC);
+
+        updateStatus(statementId, ApplicationStatus.CREDIT_ISSUED, ChangeType.AUTOMATIC);
+        statementRepository.save(statement);
+
+        dealProducer.sendSuccessSignDocumentsNotification(statement.getClient().getEmail(), statementId);
+
+        log.info("Documents for statement ID {} have been signed and credit issued.", statement.getStatementId());
     }
 }

@@ -25,6 +25,8 @@ import ru.volodin.deal.entity.dto.enums.ApplicationStatus;
 import ru.volodin.deal.entity.jsonb.Employment;
 import ru.volodin.deal.entity.jsonb.Passport;
 import ru.volodin.deal.entity.jsonb.StatusHistory;
+import ru.volodin.deal.exceptions.InvalidSesCode;
+import ru.volodin.deal.kafka.producer.DealProducer;
 import ru.volodin.deal.mappers.ClientMapper;
 import ru.volodin.deal.mappers.CreditMapper;
 import ru.volodin.deal.mappers.ScoringMapper;
@@ -65,6 +67,8 @@ class DealServiceTest {
     private CreditMapper creditMapper;
     @Mock
     private CreditService retryableCreditService;
+    @Mock
+    private DealProducer dealProducer;
 
     @InjectMocks
     private DealService dealService;
@@ -99,6 +103,7 @@ class DealServiceTest {
                 .birthdate(LocalDate.of(1990, 1, 1))
                 .email("ivan@example.com")
                 .passport(new Passport())
+                .employment(new Employment())
                 .build();
 
         savedStatement = new StatementEntity();
@@ -118,6 +123,7 @@ class DealServiceTest {
 
         statement = new StatementEntity();
         statement.setStatementId(statementId);
+        statement.setClient(clientEntity);
     }
 
     @Test
@@ -252,4 +258,62 @@ class DealServiceTest {
         assertThrows(HttpClientErrorException.class, () ->
                 dealService.calculateCredit(statementId, new FinishRegistrationRequestDto()));
     }
+
+    @Test
+    void testPrepareDocuments_success() {
+        StatementEntity st = new StatementEntity();
+        st.setStatementId(statementId);
+        st.setCredit(new CreditEntity());
+        st.setClient(clientEntity);
+
+        when(statementRepository.findById(statementId)).thenReturn(Optional.of(st));
+        when(creditMapper.toCreditDto(any())).thenReturn(new CreditDto());
+
+        dealService.prepareDocuments(statementId);
+
+        verify(statementRepository, atLeastOnce()).save(st);
+    }
+
+    @Test
+    void testCreateSignCodeDocuments_success() {
+        StatementEntity st = new StatementEntity();
+        st.setStatementId(statementId);
+        st.setClient(clientEntity);
+
+        when(statementRepository.findById(statementId)).thenReturn(Optional.of(st));
+
+        dealService.createSignCodeDocuments(statementId);
+
+        assertThat(st.getCode()).isNotNull();
+        verify(statementRepository).save(st);
+    }
+
+    @Test
+    void testSignCodeDocument_success() {
+        StatementEntity st = new StatementEntity();
+        st.setStatementId(statementId);
+        st.setCode("correct-code");
+        st.setClient(clientEntity);
+
+        when(statementRepository.findById(statementId)).thenReturn(Optional.of(st));
+
+        dealService.signCodeDocument(statementId, "correct-code");
+
+        assertThat(st.getSignDate()).isNotNull();
+        verify(statementRepository, atLeastOnce()).save(st);
+    }
+
+    @Test
+    void testSignCodeDocument_invalidSesCode_throws() {
+        StatementEntity st = new StatementEntity();
+        st.setStatementId(statementId);
+        st.setCode("correct-code");
+
+        when(statementRepository.findById(statementId)).thenReturn(Optional.of(st));
+
+        assertThrows(InvalidSesCode.class, () ->
+                dealService.signCodeDocument(statementId, "wrong-code"));
+    }
+
+
 }
