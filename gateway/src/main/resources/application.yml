@@ -1,0 +1,54 @@
+spring:
+  application:
+    name: Gateway
+  main:
+    web-application-type: reactive
+
+  cloud:
+    gateway:
+      routes:
+        - id: deal-api-docs
+          uri: ${DEAL_URL:http://localhost:8081}
+          predicates:
+            - Path=/deal/v3/api-docs
+          filters:
+            - StripPrefix=1
+
+        - id: statement-api-docs
+          uri: ${STATEMENT_URL:http://localhost:8082}
+          predicates:
+            - Path=/statement/v3/api-docs
+          filters:
+            - StripPrefix=1
+
+server:
+  port: ${SERVER_PORT:8084}
+
+
+logging:
+  level:
+    root: ${LOG_LEVEL_ROOT:INFO}
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.web.reactive.function.client.ExchangeFunctions: DEBUG
+    org.springframework.retry: DEBUG
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    urls:
+      - name: deal
+        url: ${DEAL_DOCS_PATH:/deal/v3/api-docs}
+      - name: statement
+        url: ${STATEMENT_DOCS_PATH:/statement/v3/api-docs}
+
+gateway:
+  remote:
+    dealUrl: ${DEAL_URL:http://localhost:8081}
+    statementUrl: ${STATEMENT_URL:http://localhost:8082}
+
+app:
+  logging:
+    http-filter-enabled: ${APP_LOGGING_HTTP_FILTER:true}
+    level: ${APP_LOGGING_LEVEL:DEBUG}
+  errorhandling:
+    enabled: ${APP_ERRORHANDLING_ENABLED:true}

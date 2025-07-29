@@ -19,6 +19,7 @@ services:
     depends_on:
       - postgres
     environment:
+      SPRINGDOC_API-DOCS_PATH: /deal/v3/api-docs
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/creditbank
       SPRING_DATASOURCE_USERNAME: postgres
@@ -37,6 +38,7 @@ services:
     environment:
       SERVER_PORT: 8080
       DEAL_URL: http://deal:8080/deal
+      SPRINGDOC_API-DOCS_PATH: /statement/v3/api-docs
     networks:
       - backend
 
@@ -54,6 +56,22 @@ services:
     depends_on:
       - kafka
       - zookeeper
+    networks:
+      - backend
+
+  gateway:
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile
+    ports:
+      - "8084:8080"
+    environment:
+      SERVER_PORT: 8080
+      DEAL_URL: http://deal:8080
+      STATEMENT_URL: http://statement:8080
+    depends_on:
+      - deal
+      - statement
     networks:
       - backend
 
