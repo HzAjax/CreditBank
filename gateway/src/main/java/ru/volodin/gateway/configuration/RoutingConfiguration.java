@@ -18,13 +18,23 @@ public class RoutingConfiguration {
     @Bean
     public RouteLocator myRoutes(RouteLocatorBuilder builder) {
         return builder.routes()
-                .route(p -> p
+
+                .route("deal", r -> r
                         .path("/deal/**")
+                        .filters(f -> f
+                                .circuitBreaker(c -> c
+                                        .setName("dealCircuitBreaker")
+                                        .setFallbackUri("forward:/fallback/deal")))
                         .uri(dealUrl))
 
-                .route(p -> p
+                .route("statement", r -> r
                         .path("/statement/**")
+                        .filters(f -> f
+                                .circuitBreaker(c -> c
+                                        .setName("statementCircuitBreaker")
+                                        .setFallbackUri("forward:/fallback/statement")))
                         .uri(statementUrl))
+
                 .build();
     }
 }

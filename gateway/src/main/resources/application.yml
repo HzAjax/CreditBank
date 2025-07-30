@@ -4,26 +4,8 @@ spring:
   main:
     web-application-type: reactive
 
-  cloud:
-    gateway:
-      routes:
-        - id: deal-api-docs
-          uri: ${DEAL_URL:http://localhost:8081}
-          predicates:
-            - Path=/deal/v3/api-docs
-          filters:
-            - StripPrefix=1
-
-        - id: statement-api-docs
-          uri: ${STATEMENT_URL:http://localhost:8082}
-          predicates:
-            - Path=/statement/v3/api-docs
-          filters:
-            - StripPrefix=1
-
 server:
   port: ${SERVER_PORT:8084}
-
 
 logging:
   level:
