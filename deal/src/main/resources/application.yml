@@ -56,6 +56,6 @@ retry:
 
 springdoc:
   api-docs:
-    enabled: true
+    path: /deal/v3/api-docs
   swagger-ui:
     path: /swagger-ui.html
