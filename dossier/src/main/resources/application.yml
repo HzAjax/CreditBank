@@ -1,0 +1,43 @@
+spring:
+  application:
+    name: Dossier
+  mail:
+    host: ${MAIL_HOST}
+    port: ${MAIL_PORT}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    protocol: ${MAIL_PROTOCOL}
+    properties:
+      "mail.smtp.auth": true
+      "mail.smtp.starttls.enable": true
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    consumer:
+      auto-offset-reset: earliest
+      group-id: deal-notifications
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: ru.volodin.dossier.kafka.dto
+        spring.json.type.mapping: ru.volodin.deal.kafka.dto.EmailMessage:ru.volodin.dossier.kafka.dto.EmailMessage,
+          ru.volodin.deal.kafka.dto.EmailMessageSesCode:ru.volodin.dossier.kafka.dto.EmailMessageSesCode,
+          ru.volodin.deal.kafka.dto.EmailMessageCreditDto:ru.volodin.dossier.kafka.dto.EmailMessageCreditDto,
+          ru.volodin.deal.entity.dto.api.CreditDto:ru.volodin.dossier.kafka.dto.CreditDto,
+          ru.volodin.deal.entity.dto.api.PaymentScheduleElementDto:ru.volodin.dossier.kafka.dto.PaymentScheduleElementDto
+kafka:
+  topics:
+    finishRegistration: finish-registration
+    createDocuments: create-documents
+    sendDocuments: send-documents
+    sendSes: send-ses
+    creditIssued: credit-issued
+    statementDenied: statement-denied
+
+client:
+  deal:
+    send: ${DEAL_SEND_URL:http://localhost:8081/deal/document/%s/send}
+    sign: ${DEAL_SIGN_URL:http://localhost:8081/deal/document/%s/sign}
+    code: ${DEAL_CODE_URL:http://localhost:8081/deal/document/%s/code}
+
+server:
+  port: ${SERVER_PORT:8083}

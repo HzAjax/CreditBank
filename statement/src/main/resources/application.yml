@@ -37,6 +37,6 @@ prescoring:
 
 springdoc:
   api-docs:
-    enabled: true
+    path: /statement/v3/api-docs
   swagger-ui:
     path: /swagger-ui.html

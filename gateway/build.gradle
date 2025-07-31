@@ -1,0 +1,53 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.3.0'
+	id 'io.spring.dependency-management' version '1.1.4'
+}
+
+group = 'ru.volodin'
+version = '1.0.0'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
+
+ext.versions = [
+		springDoc  : '2.6.0',
+		lombok     : '1.18.30',
+		junit      : '1.10.0',
+		lombokMapstructBindingVersion : '0.2.0',
+		mapstructVersion : '1.5.5.Final',
+		springBootConfigProcessorVersion : '3.5.2',
+		springCloud : '2023.0.1' // для Spring Boot 3.5.2
+]
+
+repositories {
+	mavenLocal()
+	mavenCentral()
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${versions.springCloud}"
+	}
+}
+
+dependencies {
+	implementation 'org.springframework.cloud:spring-cloud-starter-gateway'
+	implementation 'org.springframework.cloud:spring-cloud-starter-circuitbreaker-reactor-resilience4j'
+
+	implementation "org.springdoc:springdoc-openapi-starter-webflux-ui:${versions.springDoc}"
+
+	compileOnly "org.projectlombok:lombok:${versions.lombok}"
+	annotationProcessor "org.projectlombok:lombok:${versions.lombok}"
+}
+
+springBoot {
+	mainClass = 'ru.volodin.gateway.GatewayApplication'
+}
+
+test {
+	useJUnitPlatform()
+}
