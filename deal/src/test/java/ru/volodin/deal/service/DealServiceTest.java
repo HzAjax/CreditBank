@@ -315,5 +315,25 @@ class DealServiceTest {
                 dealService.signCodeDocument(statementId, "wrong-code"));
     }
 
+    @Test
+    void testFindAllStatemnt_returnsStatements() {
+        when(statementRepository.findAll()).thenReturn(List.of(savedStatement));
+
+        List<StatementEntity> result = dealService.findAllStatemnt();
+
+        assertThat(result).hasSize(1);
+        assertThat(result.getFirst().getStatementId()).isEqualTo(statementId);
+        verify(statementRepository, times(1)).findAll();
+    }
+
+    @Test
+    void testFindAllStatemnt_returnsEmptyList() {
+        when(statementRepository.findAll()).thenReturn(List.of());
+
+        List<StatementEntity> result = dealService.findAllStatemnt();
+
+        assertThat(result).isEmpty();
+        verify(statementRepository, times(1)).findAll();
+    }
 
 }
