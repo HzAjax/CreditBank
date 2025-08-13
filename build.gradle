@@ -1,0 +1,39 @@
+plugins {
+    id "org.sonarqube" version "5.1.0.4882" apply false
+}
+
+allprojects {
+    repositories { mavenCentral() }
+}
+
+subprojects {
+    apply plugin: "java"
+    apply plugin: "jacoco"
+
+    jacoco { toolVersion = "0.8.12" }
+
+    tasks.withType(Test).configureEach {
+        useJUnitPlatform()
+        finalizedBy("jacocoTestReport")
+    }
+
+    tasks.named("jacocoTestReport", JacocoReport).configure {
+        reports {
+            xml.required = true
+            html.required = true
+            csv.required = false
+        }
+        classDirectories.setFrom(
+                files(classDirectories.files.collect {
+                    fileTree(dir: it, include: ["**/*.class"], exclude: [
+                            "**/config/**",
+                            "**/*Application.class",
+                            "**/*Dto.class",
+                            "**/*Request*.class",
+                            "**/*Response*.class",
+                            "**/*Mapper*.class"
+                    ])
+                })
+        )
+    }
+}

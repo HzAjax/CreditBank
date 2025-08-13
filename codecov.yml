@@ -1,0 +1,15 @@
+coverage:
+  status:
+    project:
+      default:
+        target: auto
+        threshold: 0.5%
+    patch:
+      default:
+        target: 60%
+flags:
+  calculator: { carryforward: true }
+  deal:       { carryforward: true }
+  dossier:    { carryforward: true }
+  gateway:    { carryforward: true }
+  statement:  { carryforward: true }
