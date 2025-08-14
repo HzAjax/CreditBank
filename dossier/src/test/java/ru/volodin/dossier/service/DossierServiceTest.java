@@ -11,6 +11,8 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedConstruction;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -23,6 +25,7 @@ import ru.volodin.dossier.kafka.dto.EmailMessageSesCode;
 import ru.volodin.dossier.kafka.dto.enums.Theme;
 import ru.volodin.dossier.service.provider.DocumentGenerator;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -178,7 +181,66 @@ class DossierServiceTest {
 
         assertTrue(ex.getMessage().contains("NULL THEME"));
     }
-    /*
+
+    @Test
+    void testGenerateSendDocumentEmail_brokenFormat_throwsRuntimeException() {
+        try (MockedConstruction<ClassPathResource> mocked = Mockito.mockConstruction(
+                ClassPathResource.class,
+                (mock, ctx) -> {
+                    // убеждаемся, что создаётся нужный ресурс
+                    Object arg0 = ctx.arguments().get(0);
+                    if ("templates/documentSend.html".equals(arg0)) {
+                        Mockito.when(mock.exists()).thenReturn(true);
+                        Mockito.when(mock.getInputStream()).thenReturn(
+                                new ByteArrayInputStream("<p>URL 1: %s, URL 2: %s</p>".getBytes(StandardCharsets.UTF_8))
+                        );
+                    } else {
+                        // на всякий случай, чтобы другие ресурсы не мешали
+                        Mockito.when(mock.exists()).thenReturn(false);
+                        Mockito.when(mock.getInputStream()).thenThrow(new java.io.FileNotFoundException());
+                    }
+                }
+        )) {
+            UUID statementId = UUID.randomUUID();
+            // здесь cache SpringTemplateEngine не влияет, но оставлю как у тебя
+            templateEngine.clearTemplateCache();
+
+            RuntimeException ex = assertThrows(RuntimeException.class, () ->
+                    ReflectionTestUtils.invokeMethod(dossierService, "generateSendDocumentEmail", statementId)
+            );
+
+            assertTrue(ex.getMessage().contains("Ошибка при чтении шаблона send"));
+        }
+    }
+
+    @Test
+    void testGenerateSignDocumentEmail_brokenFormat_throwsRuntimeException() {
+        try (MockedConstruction<ClassPathResource> mocked = Mockito.mockConstruction(
+                ClassPathResource.class,
+                (mock, ctx) -> {
+                    Object arg0 = ctx.arguments().get(0);
+                    if ("templates/documentSign.html".equals(arg0)) {
+                        Mockito.when(mock.exists()).thenReturn(true);
+                        Mockito.when(mock.getInputStream()).thenReturn(
+                                new ByteArrayInputStream("<p>SIGN: %s, AGAIN: %s</p>".getBytes(StandardCharsets.UTF_8))
+                        );
+                    } else {
+                        Mockito.when(mock.exists()).thenReturn(false);
+                        Mockito.when(mock.getInputStream()).thenThrow(new java.io.FileNotFoundException());
+                    }
+                }
+        )) {
+            UUID statementId = UUID.randomUUID();
+            templateEngine.clearTemplateCache();
+
+            RuntimeException ex = assertThrows(RuntimeException.class, () ->
+                    ReflectionTestUtils.invokeMethod(dossierService, "generateSignDocumentEmail", statementId)
+            );
+
+            assertTrue(ex.getMessage().contains("Ошибка при чтении шаблона sign"));
+        }
+    }
+/*
     @Test
     void testGenerateSendDocumentEmail_brokenFormat_throwsRuntimeException() throws IOException {
         Path path = Path.of("build/resources/test/templates/documentSend.html");
@@ -186,8 +248,6 @@ class DossierServiceTest {
         Files.writeString(path, "<p>URL 1: %s, URL 2: %s</p>", StandardCharsets.UTF_8);
 
         UUID statementId = UUID.randomUUID();
-
-        templateEngine.clearTemplateCache();
 
         RuntimeException ex = assertThrows(RuntimeException.class, () ->
                 ReflectionTestUtils.invokeMethod(dossierService, "generateSendDocumentEmail", statementId)
@@ -204,15 +264,13 @@ class DossierServiceTest {
 
         UUID statementId = UUID.randomUUID();
 
-        templateEngine.clearTemplateCache();
-
         RuntimeException ex = assertThrows(RuntimeException.class, () ->
                 ReflectionTestUtils.invokeMethod(dossierService, "generateSignDocumentEmail", statementId)
         );
 
         assertTrue(ex.getMessage().contains("Ошибка при чтении шаблона sign"));
     }
-     */
+ */
 
     @Test
     void testGenerateCodeDocumentEmail_missingFile_throwsRuntimeException() {
