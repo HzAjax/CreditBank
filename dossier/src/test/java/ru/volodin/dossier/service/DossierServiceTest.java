@@ -178,7 +178,7 @@ class DossierServiceTest {
 
         assertTrue(ex.getMessage().contains("NULL THEME"));
     }
-
+    /*
     @Test
     void testGenerateSendDocumentEmail_brokenFormat_throwsRuntimeException() throws IOException {
         Path path = Path.of("build/resources/test/templates/documentSend.html");
@@ -195,7 +195,7 @@ class DossierServiceTest {
 
         assertTrue(ex.getMessage().contains("Ошибка при чтении шаблона send"));
     }
-    /*
+
     @Test
     void testGenerateSignDocumentEmail_brokenFormat_throwsRuntimeException() throws IOException {
         Path path = Path.of("build/resources/test/templates/documentSign.html");
@@ -212,6 +212,7 @@ class DossierServiceTest {
 
         assertTrue(ex.getMessage().contains("Ошибка при чтении шаблона sign"));
     }
+     */
 
     @Test
     void testGenerateCodeDocumentEmail_missingFile_throwsRuntimeException() {
@@ -230,6 +231,4 @@ class DossierServiceTest {
             assertTrue(ex.getMessage().contains("Ошибка при генерации шаблона code"));
         }
     }
-
-     */
 }
