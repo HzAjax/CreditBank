@@ -44,6 +44,19 @@ jobs:
 
       - run: chmod +x ./gradlew
 
+      - name: Checkout my-lib-starter
+        uses: actions/checkout@v4
+        with:
+          repository: HzAjax/MyLib
+          ref: main
+          path: my-lib
+
+      - name: Publish my-lib-starter to mavenLocal
+        working-directory: my-lib
+        run: |
+          chmod +x ./gradlew
+          ./gradlew :error-handling:publishToMavenLocal :logging:publishToMavenLocal :my-lib-starter:publishToMavenLocal -x test
+
       - name: Build & Test
         run: ./gradlew :${{ env.MODULE_DIR }}:clean :${{ env.MODULE_DIR }}:build --no-daemon
 
