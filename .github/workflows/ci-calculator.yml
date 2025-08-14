@@ -55,7 +55,7 @@ jobs:
         working-directory: my-lib
         run: |
           chmod +x ./gradlew
-          ./gradlew :my-lib-starter:publishToMavenLocal -x test
+          ./gradlew :error-handling:publishToMavenLocal :logging:publishToMavenLocal :my-lib-starter:publishToMavenLocal -x test
 
       - name: Build & Test
         run: ./gradlew :${{ env.MODULE_DIR }}:clean :${{ env.MODULE_DIR }}:build --no-daemon
