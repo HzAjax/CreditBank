@@ -1,4 +1,4 @@
-name: CI Gateway (build, tests, coverage, sonar, codecov)
+name: CI Gateway (build, sonar)
 
 on:
   push:
@@ -69,12 +69,3 @@ jobs:
             -Dsonar.organization=${{ env.SONAR_ORG }} \
             -Dsonar.projectKey=${{ env.SONAR_PROJECT_KEY }} \
             -Dsonar.coverage.jacoco.xmlReportPaths=build/reports/jacoco/test/jacocoTestReport.xml
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
-        with:
-          files: ${{ env.MODULE_DIR }}/build/reports/jacoco/test/jacocoTestReport.xml
-          token: ${{ secrets.CODECOV_TOKEN }}
-          flags: gateway
-          fail_ci_if_error: true
-          verbose: true
