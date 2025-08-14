@@ -187,7 +187,6 @@ class DossierServiceTest {
         try (MockedConstruction<ClassPathResource> mocked = Mockito.mockConstruction(
                 ClassPathResource.class,
                 (mock, ctx) -> {
-                    // убеждаемся, что создаётся нужный ресурс
                     Object arg0 = ctx.arguments().get(0);
                     if ("templates/documentSend.html".equals(arg0)) {
                         Mockito.when(mock.exists()).thenReturn(true);
@@ -195,14 +194,12 @@ class DossierServiceTest {
                                 new ByteArrayInputStream("<p>URL 1: %s, URL 2: %s</p>".getBytes(StandardCharsets.UTF_8))
                         );
                     } else {
-                        // на всякий случай, чтобы другие ресурсы не мешали
                         Mockito.when(mock.exists()).thenReturn(false);
                         Mockito.when(mock.getInputStream()).thenThrow(new java.io.FileNotFoundException());
                     }
                 }
         )) {
             UUID statementId = UUID.randomUUID();
-            // здесь cache SpringTemplateEngine не влияет, но оставлю как у тебя
             templateEngine.clearTemplateCache();
 
             RuntimeException ex = assertThrows(RuntimeException.class, () ->
