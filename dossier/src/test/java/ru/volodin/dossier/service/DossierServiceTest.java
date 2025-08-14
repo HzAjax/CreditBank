@@ -182,6 +182,8 @@ class DossierServiceTest {
 
         UUID statementId = UUID.randomUUID();
 
+        templateEngine.clearTemplateCache();
+
         RuntimeException ex = assertThrows(RuntimeException.class, () ->
                 ReflectionTestUtils.invokeMethod(dossierService, "generateSendDocumentEmail", statementId)
         );
@@ -196,6 +198,8 @@ class DossierServiceTest {
         Files.writeString(path, "<p>SIGN: %s, AGAIN: %s</p>", StandardCharsets.UTF_8);
 
         UUID statementId = UUID.randomUUID();
+
+        templateEngine.clearTemplateCache();
 
         RuntimeException ex = assertThrows(RuntimeException.class, () ->
                 ReflectionTestUtils.invokeMethod(dossierService, "generateSignDocumentEmail", statementId)
