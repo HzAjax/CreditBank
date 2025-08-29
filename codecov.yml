@@ -29,3 +29,9 @@ flags:
     carryforward: true
     paths:
       - statement/
+
+comment:
+  layout: "flags"
+  require_changes: true
+  require_base: no
+  require_head: yes
