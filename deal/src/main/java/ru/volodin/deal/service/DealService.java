@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
+import ru.volodin.deal.client.calculator.service.CreditService;
+import ru.volodin.deal.client.calculator.service.OfferService;
 import ru.volodin.deal.entity.ClientEntity;
 import ru.volodin.deal.entity.CreditEntity;
 import ru.volodin.deal.entity.StatementEntity;
@@ -27,8 +29,6 @@ import ru.volodin.deal.mappers.CreditMapper;
 import ru.volodin.deal.mappers.ScoringMapper;
 import ru.volodin.deal.repository.ClientRepository;
 import ru.volodin.deal.repository.StatementRepository;
-import ru.volodin.deal.client.calculator.service.CreditService;
-import ru.volodin.deal.client.calculator.service.OfferService;
 import ru.volodin.errorhandling.exception.ScoringException;
 
 import java.time.LocalDateTime;
@@ -155,6 +155,10 @@ public class DealService {
     public StatementEntity getStatementById(UUID statementId) {
         return statementRepository.findById(statementId)
                 .orElseThrow(() -> new EntityNotFoundException("StatementId " + statementId + " not found"));
+    }
+
+    public List<StatementEntity> findAllStatemnt(){
+        return statementRepository.findAll();
     }
 
     private void updateStatus(UUID statementId, ApplicationStatus status, ChangeType type) {
