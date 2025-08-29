@@ -1,0 +1,36 @@
+coverage:
+  status:
+    project:
+      default:
+        target: auto
+        threshold: 0.5%
+    patch:
+      default:
+        target: 30%
+
+flags:
+  calculator:
+    carryforward: true
+    paths:
+      - calculator/
+  deal:
+    carryforward: true
+    paths:
+      - deal/
+  dossier:
+    carryforward: true
+    paths:
+      - dossier/
+  gateway:
+    carryforward: true
+    paths:
+      - gateway/
+  statement:
+    carryforward: true
+    paths:
+      - statement/
+
+comment:
+  layout: "flags"
+  behavior: default
+  require_changes: false
