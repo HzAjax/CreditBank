@@ -7,9 +7,25 @@ coverage:
     patch:
       default:
         target: 60%
+
 flags:
-  calculator: { carryforward: true }
-  deal:       { carryforward: true }
-  dossier:    { carryforward: true }
-  gateway:    { carryforward: true }
-  statement:  { carryforward: true }
+  calculator:
+    carryforward: true
+    paths:
+      - calculator/
+  deal:
+    carryforward: true
+    paths:
+      - deal/
+  dossier:
+    carryforward: true
+    paths:
+      - dossier/
+  gateway:
+    carryforward: true
+    paths:
+      - gateway/
+  statement:
+    carryforward: true
+    paths:
+      - statement/
