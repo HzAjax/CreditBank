@@ -63,8 +63,8 @@ dependencies {
 
 ## Быстрый старт (локально)
 
-1. Создайте базу данных creditbank.
-2. Для Kafka необходимо создать 6 топиков: finish-registration, create-documents, send-documents, send-ses, credit-issued, statement-denied.
+1. Создайте базу данных `creditbank`.
+2. Для Kafka необходимо создать 6 топиков: `finish-registration`, `create-documents`, `send-documents`, `send-ses`, `credit-issued`, `statement-denied`.
 3. Поднимите сервисы в порядке: `calculator` → `deal` → `statement` → `dossier` → `gateway`. 
 4. Проверьте Swagger UI каждого сервиса (см. адреса выше). 
 5. Рекомендуемый пользовательский поток:
