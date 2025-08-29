@@ -32,6 +32,5 @@ flags:
 
 comment:
   layout: "flags"
-  require_changes: true
-  require_base: no
-  require_head: yes
+  behavior: default
+  require_changes: false
