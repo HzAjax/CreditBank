@@ -7,6 +7,10 @@ coverage:
     patch:
       default:
         target: 60%
+      gateway-patch:
+        flags: [ gateway ]
+        target: 20%
+        threshold: 5%
 
 flags:
   calculator:
