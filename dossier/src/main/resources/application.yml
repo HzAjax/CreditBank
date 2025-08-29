@@ -35,9 +35,9 @@ kafka:
 
 client:
   deal:
-    send: ${DEAL_SEND_URL:http://localhost:8081/deal/document/%s/send}
-    sign: ${DEAL_SIGN_URL:http://localhost:8081/deal/document/%s/sign}
-    code: ${DEAL_CODE_URL:http://localhost:8081/deal/document/%s/code}
+    send: ${DEAL_SEND_URL:http://localhost:8084/deal/document/%s/send}
+    sign: ${DEAL_SIGN_URL:http://localhost:8084/deal/document/%s/sign}
+    code: ${DEAL_CODE_URL:http://localhost:8084/deal/document/%s/code}
 
 server:
   port: ${SERVER_PORT:8083}
