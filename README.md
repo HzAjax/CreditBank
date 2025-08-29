@@ -105,10 +105,10 @@ dependencies {
 
 ## 📊 Покрытие тестами
 
-| Микросервис | Покрытие |
-|-------------|----------|
+| Микросервис | Покрытие                                                                                  |
+|-------------|-------------------------------------------------------------------------------------------|
 | calculator  | ![Coverage](https://codecov.io/gh/HzAjax/CreditBank/branch/main/graph/badge.svg?flag=calculator) |
 | deal        | ![Coverage](https://codecov.io/gh/HzAjax/CreditBank/branch/main/graph/badge.svg?flag=deal) |
 | statement   | ![Coverage](https://codecov.io/gh/HzAjax/CreditBank/branch/main/graph/badge.svg?flag=statement) |
 | dossier     | ![Coverage](https://codecov.io/gh/HzAjax/CreditBank/branch/main/graph/badge.svg?flag=dossier) |
-| gateway     | ![Coverage](https://codecov.io/gh/HzAjax/CreditBank/branch/main/graph/badge.svg?flag=gateway) |
+
