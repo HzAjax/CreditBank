@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: calculator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: calculator
+  template:
+    metadata:
+      labels:
+        io.kompose.service: calculator
+    spec:
+      containers:
+        - name: calculator
+          image: calculator:1.0.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+      restartPolicy: Always
